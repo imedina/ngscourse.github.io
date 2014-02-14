@@ -1,6 +1,6 @@
                         
 1. Introduction to NGS Technologies for Genomic Studies
-
+    - Slides - Practical exercise 1: fastQC - Practical exercise 2: cutadapt - [Data](http://www.elmundo.es/)"dowload data"
 
 2. Quality Control for NGS Raw Data and Data Preprocessing
     - Slides
