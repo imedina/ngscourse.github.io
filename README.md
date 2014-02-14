@@ -5,7 +5,10 @@
 
 ### Quality Control for NGS Raw Data and Data Preprocessing
 
-
+- Slides
+- Practical exercise 1: fastQC
+- Practical exercise 2: cutadapt
+- Data
 
 ### Mapping NGS Reads for Exome and Transcriptomics Studies
 
