@@ -1,6 +1,4 @@
-\frametitle{RefSeq Accession Format}
-
-Accession format: accession number that begins with two characters
+\frametitle {RefSeq Accession Format}\par Accession format: accession number that begins with two characters
 followed by an underscore.
 
 There are several
