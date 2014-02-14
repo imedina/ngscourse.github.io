@@ -1,14 +1,12 @@
                         
-### Introduction to NGS Technologies for Genomic Studies
+1. Introduction to NGS Technologies for Genomic Studies
 
 
-
-### Quality Control for NGS Raw Data and Data Preprocessing
-
-- Slides
-- Practical exercise 1: fastQC
-- Practical exercise 2: cutadapt
-- Data
+2. Quality Control for NGS Raw Data and Data Preprocessing
+    - Slides
+    - Practical exercise 1: fastQC
+    - Practical exercise 2: cutadapt
+    - Data
 
 ### Mapping NGS Reads for Exome and Transcriptomics Studies
 
@@ -16,6 +14,10 @@
 
 ### Mapping Quality Control and Exome Capture Evaluation
 
+- Slides
+- Practical exercise 1: fastQC
+- Practical exercise 2: cutadapt
+- Data
 
 
 ### Visualization of Mapped Reads
