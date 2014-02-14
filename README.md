@@ -1,47 +1,42 @@
-       
+                        
+### Introduction to NGS Technologies for Genomic Studies
 
 
-Introduction to NGS Technologies for Genomic Studies
---------------------------------------------------------------------------------
+
+### Quality Control for NGS Raw Data and Data Preprocessing
 
 
-Quality Control for NGS Raw Data and Data Preprocessing
---------------------------------------------------------------------------------
+
+### Mapping NGS Reads for Exome and Transcriptomics Studies
 
 
-Mapping NGS Reads for Exome and Transcriptomics Studies
---------------------------------------------------------------------------------
+
+### Mapping Quality Control and Exome Capture Evaluation
 
 
-Mapping Quality Control and Exome Capture Evaluation
---------------------------------------------------------------------------------
+
+### Visualization of Mapped Reads
 
 
-Visualization of Mapped Reads
---------------------------------------------------------------------------------
+
+### Variant Calling (SNPs & INDELs) and Variant Quality Control
 
 
-Variant Calling (SNPs & INDELs) and Variant Quality Control
---------------------------------------------------------------------------------
+
+### Variant Annotation
 
 
-Variant Annotation
---------------------------------------------------------------------------------
+
+### Variant and Gene Priorization for Exome Studies
 
 
-Variant and Gene Priorization for Exome Studies
---------------------------------------------------------------------------------
+
+### RNA-Seq Quantification and Isoforms Finding
 
 
-RNA-Seq Quantification and Isoforms Finding
---------------------------------------------------------------------------------
+
+### RNA-Seq Normalization and Differential Expression Analysis
 
 
-RNA-Seq Normalization and Differential Expression Analysis
---------------------------------------------------------------------------------
 
-
-Cloud Computing Resources for NGS
---------------------------------------------------------------------------------
-
-
+### Cloud Computing Resources for NGS
