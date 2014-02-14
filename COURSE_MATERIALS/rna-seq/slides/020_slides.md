@@ -3,6 +3,12 @@
 % (last update 14-02-2014)
 
 
+================================================================================
+<!--![This is the caption](imags/image.png)-->
+![This is the caption](http://blog.desdelinux.net/wp-content/uploads/2012/10/diagram.png)
+
+
+
 NCBI
 ================================================================================
 
