@@ -20,7 +20,7 @@ Software used in this practical
 Data used in this practical
 -------------------------------
 
-- [mirbase_mature.fa](../../../COURSE_EXAMPLE_DATA/mirbase_mature.fa): mature micro RNAs downloaded form mirbase
+- [mirbase_mature.fa](../../../COURSE_EXAMPLE_DATA/f010_mirbase_mature.fa): mature micro RNAs downloaded form mirbase
 
 You can download them or copy them to your ``data`` directory for the practical
 
