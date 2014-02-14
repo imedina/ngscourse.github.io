@@ -3,19 +3,11 @@
 % (last update 14-02-2014)
 
 
-<<<<<<< HEAD
-
 Titulo
 ================================================================================
 
-
 ![](images/diagram)
-=======
-================================================================================
 <!--![This is the caption](imags/image.png)-->
-![This is the caption](http://blog.desdelinux.net/wp-content/uploads/2012/10/diagram.png)
->>>>>>> 85dc897ff8c7045fab4ff4ea78ae864e5a819bd9
-
 
 
 NCBI
