@@ -1,0 +1,36 @@
+\frametitle {RefSeq Accession Format}\par Accession format: accession number that begins with two characters
+followed by an underscore.
+
+There are several
+\href{http://www.ncbi.nlm.nih.gov/books/NBK21091/table/ch18.T.refseq_accession_numbers_and_mole/?report=objectonly}{RefSeq
+accession prefixes}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  NM\_: mRNA\\
+\item
+  NR\_: RNA (non coding)
+\item
+  NC\_: Complete genomic molecule, usually a reference assembly.
+\end{itemize}
+
+Curation \textbf{VERSION} is indicated after a dot:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  NM\_000014.4
+\item
+  NM\_000014.5
+\end{itemize}
+
+Usual fasta id for a sequence:
+
+\begin{verbatim}
+>gi|262118207|ref|NM_000202.5| Homo sapiens iduronate ...
+\end{verbatim}
+
+Read about
+\href{http://www.ncbi.nlm.nih.gov/nuccore/NM_002020.4?report=girevhist}{GIs}
+
