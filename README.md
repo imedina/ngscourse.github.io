@@ -1,54 +1,30 @@
-Some Title Here
-===============
-                 
-                 
-                        
-1. Introduction to NGS Technologies for Genomic Studies
-    - Slides
+NGS Data Analysis Course
+================================================================================
 
-2. Quality Control for NGS Raw Data and Data Preprocessing
+### Introduction to Linux systems
+
+### Introduction to NGS technologies
+
+
+### Quality control for NGS raw data
     - [Slides](COURSE_MATERIALS/rna-seq/slides/slides.pdf) - [Practical exercise 1: fastQC](COURSE_MATERIALS/rna-seq/examples/example.html) - Practical exercise 2: cutadapt
 
+### Mapping reads to a reference genome
 
-   
-
-### Mapping NGS Reads for Exome and Transcriptomics Studies
-
-[hola]
-
-[hola]:http://www.elmundo.es/ "hola por aqui"
-
-
-### Mapping Quality Control and Exome Capture Evaluation
-
-- Slides
-- Practical exercise 1: fastQC
-- Practical exercise 2: cutadapt
-- Data
-
-
-### Visualization of Mapped Reads
+### Visualization of NGS data
 
 
 
-### Variant Calling (SNPs & INDELs) and Variant Quality Control
+### Variant calling
+
+### Variant annotation
+
+### Association studies
 
 
 
-### Variant Annotation
+### RNA-Seq data processing
 
+### RNA-Seq data analysis
 
-
-### Variant and Gene Priorization for Exome Studies
-
-
-
-### RNA-Seq Quantification and Isoforms Finding
-
-
-
-### RNA-Seq Normalization and Differential Expression Analysis
-
-
-
-### Cloud Computing Resources for NGS
+### Functional analysis
