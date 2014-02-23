@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NGS: quality control &amp; adapter trimming</title>
+  <style>
+  body {
+      margin: auto;
+      padding-right: 1em;
+      padding-left: 1em;
+      /*max-width: 50em; */
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+      color: black;
+      font-family: Verdana, sans-serif;
+      font-size: 100%;
+      line-height: 140%;
+      color: #333; 
+  }
+  pre {
+      border: 1px dotted gray;
+      background-color: #ececec;
+      color: #1111111;
+      padding: 0.5em;
+  }
+  code {
+      font-family: monospace;
+  }
+  h1 a, h2 a, h3 a, h4 a, h5 a { 
+      text-decoration: none;
+      color: #7a5ada; 
+  }
+  h1, h2, h3, h4, h5 { font-family: verdana;
+                       font-weight: bold;
+                       border-bottom: 1px dotted black;
+                       color: #7a5ada; }
+  h1 {
+          font-size: 130%;
+  }
+  
+  h2 {
+          font-size: 110%;
+  }
+  
+  h3 {
+          font-size: 95%;
+  }
+  
+  h4 {
+          font-size: 90%;
+          font-style: italic;
+  }
+  
+  h5 {
+          font-size: 90%;
+          font-style: italic;
+  }
+  
+  h1.title {
+          font-size: 200%;
+          font-weight: bold;
+          padding-top: 0.2em;
+          padding-bottom: 0.2em;
+          text-align: left;
+          border: none;
+  }
+  
+  dt code {
+          font-weight: bold;
+  }
+  dd p {
+          margin-top: 0;
+  }
+  
+  #footer {
+          padding-top: 1em;
+          font-size: 70%;
+          color: gray;
+          text-align: center;
+          }
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">NGS: quality control &amp; adapter trimming</h1>
+</div>
+<h1 id="preliminaries">Preliminaries</h1>
+<h2 id="software-used-in-this-practical">Software used in this practical</h2>
+<ul>
+<li><p><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a>: A quality control tool for high throughput sequence data.</p></li>
+<li><p><a href="http://code.google.com/p/cutadapt/">cutadapt</a>: A tool that removes adapter sequences from DNA sequencing reads</p></li>
+</ul>
+<h2 id="file-formats-fastq">File formats: FastQ</h2>
+<p><a href="http://en.wikipedia.org/wiki/FASTQ_format">Wikipedia</a>.</p>
+<p><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847217/">NAR 2010</a></p>
+<h1 id="exercise">Exercise</h1>
+<p>The file <strong>raw_mirna.fastq</strong> contains reads form a microRNA sequencing experiment.</p>
+<p>Use fastqc to explore the quality of the data:</p>
+<pre><code>fastqc raw_mirna.fastq</code></pre>
+<p>There are 2 known adapters used in this experiment:</p>
+<pre><code>CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA
+CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC</code></pre>
+<p>Use R-Bioconductor to compute their reverse, complementary and reverse complementary.</p>
+<p>Hint:</p>
+<pre><code>library (Biostrings)
+myseq &lt;- DNAString (&quot;CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC&quot;)
+reverse (myseq)
+complement (myseq)
+reverseComplement (myseq)</code></pre>
+<!--
+
+    cat (c (as.character (myseq),
+            as.character (reverse (myseq)),
+            as.character (complement (myseq)),
+            as.character (reverseComplement (myseq))),
+         sep = "\n")
+
+-->
+
+
+
+<p>Use grep form Linux shell to find out which of the versions of the adapter is in your data.</p>
+<!--
+
+Adapter 1
+----------
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA raw_mirna.fastq | wc -l  ## at the beginning is there
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCTAAACCCTTAGAATATTCAAGACATACTCTGGTGAGATTTTT raw_mirna.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG raw_mirna.fastq | wc -l  ## is there at the end ... but not so much
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAAGGGTTTAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC raw_mirna.fastq | wc -l 
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGA raw_mirna.fastq | wc -l 
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCT raw_mirna.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATT raw_mirna.fastq | wc -l 
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAA raw_mirna.fastq | wc -l 
+
+    grep GAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA raw_mirna.fastq | wc -l 
+    grep CTTAGAATATTCAAGACATACTCTGGTGAGATTTTT raw_mirna.fastq | wc -l 
+    grep ATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG raw_mirna.fastq | wc -l 
+    grep TAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC raw_mirna.fastq | wc -l 
+
+
+Adapter 2
+----------
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC raw_mirna.fastq | wc -l   ## is there at the end ... but not so much
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATATTTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG raw_mirna.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG raw_mirna.fastq | wc -l   ## is there at the beginning
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAAGAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC raw_mirna.fastq | wc -l 
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATA raw_mirna.fastq | wc -l 
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATAT raw_mirna.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTT raw_mirna.fastq | wc -l 
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAA raw_mirna.fastq | wc -l 
+
+    grep AAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC raw_mirna.fastq | wc -l 
+    grep TTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG raw_mirna.fastq | wc -l 
+    grep CTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG raw_mirna.fastq | wc -l 
+    grep GAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC raw_mirna.fastq | wc -l 
+
+-->
+
+<p>Use cutadapt to make an adapter trimming of the reads. Check the options:</p>
+<ul>
+<li><strong>-a</strong> for adapter to the 3' end.</li>
+<li><strong>-g</strong> for adapter to the 5' end.</li>
+</ul>
+<p>command:</p>
+<pre><code>cutadapt -g CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA -o mirna_trim1.fastq raw_mirna.fastq
+
+cutadapt -a TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG -o mirna_trim2.fastq mirna_trim1.fastq
+
+cutadapt -g GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG         -o mirna_trim3.fastq mirna_trim2.fastq
+
+cutadapt -a CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC         -o mirna_trim4.fastq mirna_trim3.fastq</code></pre>
+<!--
+
+Adapter 1
+----------
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA mirna_trim4.fastq | wc -l  ## at the beginning is there
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCTAAACCCTTAGAATATTCAAGACATACTCTGGTGAGATTTTT mirna_trim4.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG mirna_trim4.fastq | wc -l  ## is there at the end ... but not so much
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAAGGGTTTAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC mirna_trim4.fastq | wc -l 
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGA mirna_trim4.fastq | wc -l 
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCT mirna_trim4.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATT mirna_trim4.fastq | wc -l 
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAA mirna_trim4.fastq | wc -l 
+
+    grep GAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA mirna_trim4.fastq | wc -l 
+    grep CTTAGAATATTCAAGACATACTCTGGTGAGATTTTT mirna_trim4.fastq | wc -l 
+    grep ATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG mirna_trim4.fastq | wc -l 
+    grep TAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC mirna_trim4.fastq | wc -l 
+
+
+Adapter 2
+----------
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC mirna_trim4.fastq | wc -l   ## is there at the end ... but not so much
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATATTTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG mirna_trim4.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG mirna_trim4.fastq | wc -l   ## is there at the beginning
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAAGAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC mirna_trim4.fastq | wc -l 
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATA mirna_trim4.fastq | wc -l 
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATAT mirna_trim4.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTT mirna_trim4.fastq | wc -l 
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAA mirna_trim4.fastq | wc -l 
+
+    grep AAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC mirna_trim4.fastq | wc -l 
+    grep TTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG mirna_trim4.fastq | wc -l 
+    grep CTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG mirna_trim4.fastq | wc -l 
+    grep GAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC mirna_trim4.fastq | wc -l 
+
+-->
+
+
+
+<p>Check the quality again using fastqc:</p>
+<pre><code>fastqc mirna_trim4.fastq</code></pre>
+<p>Use cutadapt to filter reads by quality and length. Check the options:</p>
+<ul>
+<li><strong>-q</strong> quality cutoff.</li>
+<li><strong>-m</strong> minimum length.</li>
+<li><p><strong>-M</strong> maximum length.</p>
+<p>cutadapt -m 17 -M 30 -q 10 -o mirna_trim5.fastq mirna_trim4.fastq</p></li>
+</ul>
+<p>And check quality again using fastqc</p>
+<pre><code>fastqc mirna_trim5.fastq</code></pre>
+</body>
+</html>

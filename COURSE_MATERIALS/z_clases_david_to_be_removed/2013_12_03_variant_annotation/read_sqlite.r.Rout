@@ -1,0 +1,351 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ##read_sqlite.r
+> ##2013-12-03 dmontaner@cipf.es
+> ##Reading SIFT data from an SQLite database
+> 
+> ## The example data has been downloaded from:
+> ## ftp://ftp.jcvi.org/pub/data/sift/Human_db_37_ensembl_63/Human_CHR20.sqlite.gz
+>     
+> date ()
+[1] "Tue Dec  3 16:32:12 2013"
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.2 (2013-05-16)"
+[1] "R version 3.0.2 (2013-09-25)"
+> library (RSQLite); packageDescription ("RSQLite", fields = "Version") # "0.11.4"  ## depends on DBI
+Loading required package: DBI
+[1] "0.11.4"
+> 
+> help (package = DBI)      ##DBI is the generic package for data base connections
+
+		Information on package ‘DBI’
+
+Description:
+
+Package:            DBI
+Version:            0.2-7
+Date:               2013-05-08
+Title:              R Database Interface
+Author:             R Special Interest Group on Databases (R-SIG-DB)
+Maintainer:         David A. James <daj025@gmail.com>
+Depends:            R (>= 2.15.0), methods
+Imports:            methods
+Description:        A database interface (DBI) definition for
+                    communication between R and relational database
+                    management systems.  All classes in this package
+                    are virtual and need to be extended by the various
+                    R/DBMS implementations.
+License:            LGPL (>= 2)
+Collate:            DBI.R Util.R zzz.R
+NeedsCompilation:   no
+Packaged:           2013-05-08 23:44:25 UTC; jamesda4
+Repository:         CRAN
+Date/Publication:   2013-05-09 12:09:19
+Built:              R 3.0.2; ; 2013-12-03 12:14:05 UTC; unix
+
+Index:
+
+DBIConnection-class     Class DBIConnection
+DBIDriver-class         Class DBIDriver
+DBIObject-class         Class DBIObject
+DBIResult-class         Class DBIResult
+dbCallProc              Call an SQL stored procedure
+dbCommit                DBMS Transaction Management
+dbConnect               Create a connection to a DBMS
+dbDataType              Determine the SQL Data Type of an S object
+dbDriver                Database Interface (DBI) Classes and drivers
+dbGetInfo               Database interface meta-data
+dbListTables            List items from a remote DBMS and from objects
+                        that implement the database interface DBI.
+dbReadTable             Convenience functions for Importing/Exporting
+                        DBMS tables
+dbSendQuery             Execute a statement on a given database
+                        connection
+dbSetDataMappings       Set data mappings between an DBMS and R/Splus
+fetch                   Fetch records from a previously executed query
+make.db.names           Make R/Splus identifiers into legal SQL
+                        identifiers
+print.list.pairs        Support functions
+
+Further information is available in the following vignettes in
+directory ‘/usr/local/lib64/R/library/DBI/doc’:
+
+DBI: A Common Database Interface (DBI) (source, pdf)
+
+> help (package = RSQLite)  ##RSQLite
+
+		Information on package ‘RSQLite’
+
+Description:
+
+Package:            RSQLite
+Version:            0.11.4
+Title:              SQLite interface for R
+Author:             David A. James, Seth Falcon, and (for the included
+                    SQLite sources) the authors of SQLite
+Maintainer:         Seth Falcon <seth@userprimary.net>
+Description:        Database Interface R driver for SQLite.  This
+                    package embeds the SQLite database engine in R and
+                    provides an interface compliant with the DBI
+                    package.  The source for the SQLite engine (version
+                    3.7.17) is included.
+Depends:            R (>= 2.10.0), methods, DBI (>= 0.2-5)
+Imports:            methods, DBI (>= 0.2-3)
+Suggests:           RUnit (>= 0.4.22)
+License:            LGPL (>= 2)
+Collate:            zzz.R S4R.R dbObjectId.R SQLite.R SQLiteSupport.R
+Packaged:           2013-05-25 23:31:12 UTC; seth
+NeedsCompilation:   yes
+Repository:         CRAN
+Date/Publication:   2013-05-26 08:32:47
+Built:              R 3.0.2; x86_64-unknown-linux-gnu; 2013-12-03
+                    12:13:21 UTC; unix
+
+Index:
+
+SQLKeywords-methods     Make R/S-Plus identifiers into legal SQL
+                        identifiers
+SQLite                  Initialize the SQLite engine for the current R
+                        session.
+SQLiteConnection-class
+                        Class SQLiteConnection
+SQLiteDriver-class      Class SQLiteDriver
+SQLiteObject-class      Class SQLiteObject
+SQLiteResult-class      Class SQLiteResult
+dbBuildTableDefinition
+                        Build the SQL CREATE TABLE definition as a
+                        string
+dbCallProc-methods      Call an SQL stored procedure
+dbCommit-methods        DBMS Transaction Management
+dbConnect-methods       Create a connection object to an SQLite DBMS
+dbDataType-methods      Determine the SQL Data Type of an S object
+dbDriver-methods        SQLite implementation of the Database Interface
+                        (DBI) classes and drivers
+dbGetInfo               Database interface meta-data
+dbListTables-methods    List items from an SQLite DBMS and from objects
+dbObjectId-class        Class dbObjectId
+dbReadTable-methods     Convenience functions for Importing/Exporting
+                        DBMS tables
+dbSendQuery-methods     Execute a SQL statement on a database
+                        connection
+dbSetDataMappings-methods
+                        Set data mappings between SQLite and R/S-Plus
+fetch-methods           Fetch records from a previously executed query
+isIdCurrent             Check whether an dbObjectId handle object is
+                        valid or not
+sqliteCopyDatabase      Copy a SQLite database
+sqliteInitDriver        Support Functions
+sqliteQuickColumn       Return an entire column from a SQLite database
+summary-methods         Summarize an SQLite object
+
+> 
+> 
+> ################################################################################
+> 
+> 
+> ##' Database driver
+> driver.name <- dbDriver (drvName = "SQLite")
+> driver.name
+<SQLiteDriver: DBI MGR (14267)> 
+> 
+> ##' Connect to the database
+> conection.object <- dbConnect (drv = driver.name, dbname = "Human_CHR20.sqlite")
+> conection.object
+<SQLiteConnection: DBI CON (14267, 0)> 
+> 
+> ##' Get database information
+> dbGetInfo (conection.object)
+$dbname
+[1] "Human_CHR20.sqlite"
+
+$serverVersion
+[1] "3.7.17"
+
+$rsId
+integer(0)
+
+$loadableExtensions
+[1] "on"
+
+$flags
+[1] 6
+
+$vfs
+[1] ""
+
+> 
+> 
+> ##' Show tables
+> dbListTables (conection.object)
+[1] "chr20_19997760_30000641" "chr20_1_10023864"       
+[3] "chr20_29992648_40000000" "chr20_40000001_50000000"
+[5] "chr20_50000001_60512307" "chr20_59827559_63025520"
+[7] "chr20_9966736_20014299" 
+> 
+> 
+> ##' List the fields form one table
+> dbListFields (conn = conection.object, name = "chr20_19997760_30000641")
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+> 
+> 
+> ##' List the fields form all tables
+> tablas <- dbListTables (conection.object)
+> for (ta in tablas) {
++     print (dbListFields (conn = conection.object, name = ta))
++ }
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+ [1] "CHR"        "COORD1"     "COORD2"     "ORN"        "RSID"      
+ [6] "ENSG"       "ENST"       "ENSP"       "REGION"     "SNP"       
+[11] "NT1"        "NT2"        "NTPOS1"     "NTPOS2"     "CODON1"    
+[16] "CODON2"     "AA1"        "AA2"        "AAPOS1"     "AAPOS2"    
+[21] "CDS"        "AA1_VALID"  "ENST_VALID" "SCORE"      "MEDIAN"    
+[26] "SEQS_REP"  
+> 
+> 
+> ##' Load one table into the R session
+> datos <- dbReadTable (conn = conection.object, name = "chr20_19997760_30000641")
+> class (datos)
+[1] "data.frame"
+> dim (datos)
+[1] 445490     26
+> datos[1:3,]
+    CHR   COORD1   COORD2 ORN  RSID                   ENSG            ENST
+1 chr20 20015012 20015013  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+2 chr20 20015013 20015014  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+3 chr20 20015014 20015015  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+             ENSP                        REGION SNP NT1 NT2 NTPOS1 NTPOS2
+1 ENSP00000366544 EXON.15 ENSE00001473580 3'UTR       T                  
+2 ENSP00000366544 EXON.15 ENSE00001473580 3'UTR       A                  
+3 ENSP00000366544 EXON.15 ENSE00001473580 3'UTR       A                  
+  CODON1 CODON2 AA1 AA2 AAPOS1 AAPOS2 CDS AA1_VALID ENST_VALID SCORE MEDIAN
+1                                       0         1          1             
+2                                       0         1          1             
+3                                       0         1          1             
+  SEQS_REP
+1         
+2         
+3         
+> 
+> 
+> ##' Most positions have an empty SCORE;
+> ##' remember SIFT is just computed for coding regions.
+> datos[1:10, "SCORE"] 
+ [1] "" "" "" "" "" "" "" "" "" ""
+> 
+> ##' Get the positions with non empty SIFT SCORE
+> touse <- datos[,"SCORE"] != ""
+> table (touse)
+touse
+ FALSE   TRUE 
+209281 236209 
+> 
+> datos[touse,][1:10,]
+       CHR   COORD1   COORD2 ORN  RSID                   ENSG            ENST
+1843 chr20 20016841 20016842  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1844 chr20 20016841 20016842  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1845 chr20 20016841 20016842  -1   ref CRNKL1 ENSG00000101343 ENST00000377327
+1846 chr20 20016841 20016842  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1848 chr20 20016842 20016843  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1849 chr20 20016842 20016843  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1850 chr20 20016842 20016843  -1   ref CRNKL1 ENSG00000101343 ENST00000377327
+1851 chr20 20016842 20016843  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+1853 chr20 20016843 20016844  -1   ref CRNKL1 ENSG00000101343 ENST00000377327
+1854 chr20 20016843 20016844  -1 novel CRNKL1 ENSG00000101343 ENST00000377327
+                ENSP                      REGION           SNP NT1 NT2 NTPOS1
+1843 ENSP00000366544 EXON.15 ENSE00001473580 CDS    Synonymous   G   A   2507
+1844 ENSP00000366544 EXON.15 ENSE00001473580 CDS    Synonymous   G   C   2507
+1845 ENSP00000366544 EXON.15 ENSE00001473580 CDS     Reference   G   G   2507
+1846 ENSP00000366544 EXON.15 ENSE00001473580 CDS    Synonymous   G   T   2507
+1848 ENSP00000366544 EXON.15 ENSE00001473580 CDS Nonsynonymous   G   A   2506
+1849 ENSP00000366544 EXON.15 ENSE00001473580 CDS Nonsynonymous   G   C   2506
+1850 ENSP00000366544 EXON.15 ENSE00001473580 CDS     Reference   G   G   2506
+1851 ENSP00000366544 EXON.15 ENSE00001473580 CDS Nonsynonymous   G   T   2506
+1853 ENSP00000366544 EXON.15 ENSE00001473580 CDS     Reference   A   A   2505
+1854 ENSP00000366544 EXON.15 ENSE00001473580 CDS Nonsynonymous   A   C   2505
+     NTPOS2 CODON1 CODON2 AA1 AA2 AAPOS1 AAPOS2 CDS AA1_VALID ENST_VALID SCORE
+1843   2508    TCC    TCt   S   S    835    836   1         1          1     1
+1844   2508    TCC    TCg   S   S    835    836   1         1          1     1
+1845   2508    TCC    TCc   S   S    835    836   1         1          1     1
+1846   2508    TCC    TCa   S   S    835    836   1         1          1     1
+1848   2507    TCC    TtC   S   F    835    836   1         1          1     0
+1849   2507    TCC    TgC   S   C    835    836   1         1          1     0
+1850   2507    TCC    TcC   S   S    835    836   1         1          1     1
+1851   2507    TCC    TaC   S   Y    835    836   1         1          1     0
+1853   2506    TCC    tCC   S   S    835    836   1         1          1     1
+1854   2506    TCC    gCC   S   A    835    836   1         1          1  0.12
+     MEDIAN SEQS_REP
+1843   3.85       31
+1844   3.85       31
+1845   3.85       31
+1846   3.85       31
+1848   3.85       31
+1849   3.85       31
+1850   3.85       31
+1851   3.85       31
+1853   3.85       31
+1854   3.85       31
+> 
+> ##' Why are the coordinates repeated 4 times each?
+> 
+> proc.time()
+   user  system elapsed 
+  5.315   0.140   5.451 

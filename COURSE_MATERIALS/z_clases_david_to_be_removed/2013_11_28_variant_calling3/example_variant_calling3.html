@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="David Montaner" />
+  <title>NGS: Variant Calling III</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style>
+  
+  html {
+      color:#000;
+      background:#FFF;
+  }
+  
+  body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
+      margin:0;
+      padding:0;
+  }
+  
+  table {
+      border-spacing:0;
+      font-size:inherit;
+      font:100%;
+      /*max-width:100%;*/
+      background-color:transparent;
+      border:1px solid #DDD;
+      border-left:0;
+      border-collapse:collapsed;
+      -webkit-border-radius:4px;
+      -moz-border-radius:4px;
+      border-radius:4px;
+  }
+  
+  fieldset,img {
+      border:0;
+  }
+  
+  address,caption,cite,code,dfn,em,strong,th,var {
+      font-style:normal;
+      font-weight:400;
+  }
+  
+  ol,ul {
+      list-style:none;
+  }
+  
+  caption,th {
+      text-align:left;
+  }
+  
+  h1,h2,h3,h4,h5,h6 {
+      font-size:100%;
+      font-weight:400;
+      color:#20639b;
+      margin:1em 0;
+  }
+  
+  q:before,q:after {
+      content:'';
+  }
+  
+  abbr,acronym {
+      border:0;
+      font-variant:normal;
+      border-bottom:1px dotted #000;
+      cursor:help;
+  }
+  
+  sup {
+      vertical-align:text-top;
+  }
+  
+  sub {
+      vertical-align:text-bottom;
+  }
+  
+  input,textarea,select {
+      font-family:inherit;
+      font-weight:inherit;
+      font-size:100%;
+  }
+  
+  legend {
+      color:#000;
+  }
+  
+  h1,h2,h3,h4,h5,h6,strong {
+      font-weight:700;
+  }
+  
+  em {
+      font-style:italic;
+  }
+  
+  blockquote,ul,ol,dl {
+      margin:1em;
+  }
+  
+  ol,ul,dl {
+      margin-left:2em;
+  }
+  
+  ol {
+      list-style:decimal outside;
+  }
+  
+  ul {
+      list-style:disc outside;
+  }
+  
+  dl dd {
+      margin-left:1em;
+  }
+  
+  th,td {
+      line-height:1.125em;
+      text-align:left;
+      vertical-align:top;
+      border-top:1px solid #DDD;
+      border-left:1px solid #DDD;
+      padding:.5em;
+  }
+  
+  th {
+      font-weight:700;
+      text-align:center;
+      color:#20639b;
+  }
+  
+  table thead:first-child tr:first-child th,table tbody:first-child tr:first-child th,table tbody:first-child tr:first-child td {
+      border-top:0;
+  }
+  
+  table thead:first-child tr:first-child th:first-child,table tbody:first-child tr:first-child td:first-child {
+      -webkit-border-radius:4px 0 0 0;
+      -moz-border-radius:4px 0 0;
+      border-radius:4px 0 0 0;
+  }
+  
+  table thead:first-child tr:first-child th:last-child,table tbody:first-child tr:first-child td:last-child {
+      -webkit-border-radius:0 4px 0 0;
+      -moz-border-radius:0 4px 0 0;
+      border-radius:0 4px 0 0;
+  }
+  
+  table thead:last-child tr:last-child th:first-child,table tbody:last-child tr:last-child td:first-child {
+      -webkit-border-radius:0 0 0 4px;
+      -moz-border-radius:0 0 0 4px;
+      border-radius:0 0 0 4px;
+  }
+  
+  table thead:last-child tr:last-child th:last-child,table tbody:last-child tr:last-child td:last-child {
+      -webkit-border-radius:0 0 4px 0;
+      -moz-border-radius:0 0 4px;
+      border-radius:0 0 4px 0;
+  }
+  
+  table tbody tr:nth-child(odd) td,table tbody tr:nth-child(odd) th {
+      background-color:#f9f9f9;
+  }
+  
+  caption {
+      margin-bottom:.5em;
+      text-align:center;
+  }
+  
+  p,fieldset,table,pre {
+      margin-top:.5em;
+      margin-bottom:.5em;
+  }
+  
+  body {
+      font:16px/1.4 "Helvetica Neue", Helvetica, "Open Sans", Arial, sans-serif;
+      color:#333;
+      /*max-width:960px;*/
+      /*margin:0 auto;*/
+      margin:1em;
+  }
+  
+  pre,code,kbd,samp,tt {
+      font-family:monospace;
+      font-size:90%;
+      line-height:100%;
+  }
+  
+  h1 {
+      font-size:200%;
+      border-bottom:2px dotted #ddd;
+  }
+  
+  a,a:visited,code {
+      /*color:#f06024;*/
+      color:#20639b;
+  }
+  
+  a:link {text-decoration:none;}    /* unvisited link */
+  a:visited {text-decoration:none;} /* visited link */
+  a:hover {text-decoration:underline;}   /* mouse over link */
+  a:active {text-decoration:underline;}  /* selected link */
+  
+  
+  h2 {
+      font-size:160%;
+  }
+  
+  h3 {
+      font-size:120%;
+  }
+  
+  h4 {
+      font-size:110%;
+  }
+  
+  h5 {
+      font-size:95%;
+  }
+  
+  h6 {
+      font-size:90%;
+      color:#999;
+  }
+  
+  dl {
+      margin:0 0 1.125em;
+  }
+  
+  dt {
+      font-weight:700;
+      line-height:1.125em;
+  }
+  
+  dd {
+      margin-left:1em;
+      line-height:1.125em;
+  }
+  
+  pre,blockquote {
+      border:1px solid #ddd;
+      background-color:#f1f1f1;
+      -webkit-border-radius:6px;
+      -moz-border-radius:6px;
+      border-radius:6px;
+      padding:10px;
+  }
+  
+  blockquote {
+      margin:1em 2.5em;
+  }
+  
+  code {
+      color:#20639b;
+      background:#f1f1f1;
+  }
+  
+  img {
+      max-width:100%;
+  }
+  
+  ol[type=1] {
+      list-style-type:decimal;
+  }
+  
+  ol[type=a] {
+      list-style-type:lower-alpha;
+  }
+  
+  ol[type=A] {
+      list-style-type:upper-alpha;
+  }
+  
+  ol[type=I] {
+      list-style-type:upper-roman;
+  }
+  
+  ol[type=i] {
+      list-style-type:lower-roman;
+  }
+  
+  
+  
+  h1.title {
+          font-size: 200%;
+          font-weight: bold;
+          padding-top: 0.2em;
+          /*padding-bottom: 0.2em;*/
+          text-align: center;
+          border: none;
+  }
+  
+  h2.author {
+          font-size: 100%;
+          text-align: center;
+          border: none;
+  }
+  
+  h3.date {
+          font-size: 75%;
+          text-align: center;
+          border: none;
+          font-style:italic;
+          font-weight: bold;
+  }
+  
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">NGS: Variant Calling III</h1>
+<h2 class="author"><a href="http://www.dmontaner.com/">David Montaner</a></h2>
+<h3 class="date">(28-11-2013)</h3>
+</div>
+<!--
+Clean the starting dataset
+================================================================================
+#    rm -r data/*
+#    cp data0/f* data/
+#    cd data
+-->
+
+<h1 id="preliminaries">Preliminaries</h1>
+<p>We carry on with the Variant Calling practical (19-11-2013 and 26-11-2013</p>
+<h2 id="software-used-in-this-practical">Software used in this practical:</h2>
+<ul>
+<li><a href="http://samtools.sourceforge.net/tabix.shtml">tabix</a>: Compresses and indexes TAB-delimited files. Useful for GFF, GTF, BED and VCF files. See paper <a href="http://bioinformatics.oxfordjournals.org/content/27/5/718.full">here</a>.</li>
+<li><a href="http://vcftools.sourceforge.net/index.html">VCFtools</a>: A package for working with VCF files: merging, comparing, annotating …</li>
+</ul>
+<!-- Tool References -->
+
+<h2 id="file-formats">File formats:</h2>
+<ul>
+<li><p>VCF Variant Call Format: see <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41">1000 Genomes</a> and <a href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a> specifications.</p></li>
+<li><p><a href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF2</a> is a binary compressed file equivalent of a VCF. It can be indexed with <a href="http://samtools.sourceforge.net/tabix.shtml">tabix</a> and efficiently handled.</p></li>
+</ul>
+<!-- File Format References -->
+
+<h2 id="install">Install</h2>
+<p>Pay attention to the <strong>PERL5LIB</strong> variable required for the installation. See <a href="http://vcftools.sourceforge.net/docs.html#install">VCFtools install section</a>.</p>
+<h1 id="exercise">Exercise</h1>
+<p>We will use <strong>VCFtools</strong> to perform some common computations over VCF files.</p>
+<h2 id="extract-parts-of-the-vcf-file-according-to-chromosome-position">Extract parts of the VCF file according to chromosome position:</h2>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f091_part --chr 20 --from-bp 131785 --to-bp 265205 --recode</code></pre>
+<p>Get just the <strong>allele frequency</strong> from the VCF file…</p>
+<ul>
+<li><p>from some positions:</p>
+<p>vcftools –gzvcf f090_snp_filtered.vcf.gz –out f092_part_freq –chr 20 –from-bp 131785 –to-bp 265205 –freq</p></li>
+<li><p>from the whole file:</p>
+<p>vcftools –gzvcf f090_snp_filtered.vcf.gz –out f092_all_freq –freq</p></li>
+</ul>
+<p>You can also extract the raw allele counts instead the frequency:</p>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f092_all_count --counts</code></pre>
+<h2 id="filter-by-flags">Filter by flags</h2>
+<p>We can use <strong>VCFtools</strong> to filter the rows in the VCF file according to the <em>FILTER</em> filed.</p>
+<p>We can for instance filter the <em>low confidence</em> calls in our VCF file (flagged as “LowConf”).</p>
+<p>We could find such rows using the Linux command <code>grep</code>:</p>
+<pre><code>grep &quot;LowConf&quot; f090_snp_filtered.vcf</code></pre>
+<p>but this does not maintain the VCF file structure. We my prefer to <strong>print</strong> them in the shell doing:</p>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f093_lowconf --keep-filtered LowConf --recode-to-stream</code></pre>
+<p>or to save them into a new file by:</p>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f094_lowconf --keep-filtered LowConf --recode</code></pre>
+<p>¿What happens if you do not use the options <code>--recode-to-stream</code> or <code>--recode</code>?</p>
+<p>But usually we will be more keen on getting a new file just with the variants which <em>pass</em> the filtering:</p>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f095_pass --remove-filtered-all --recode
+
+grep &quot;LowConf&quot; f095_pass.recode.vcf</code></pre>
+<h2 id="filtering-based-on-qualities">Filtering based on qualities</h2>
+<p>We can select the variants with high quality:</p>
+<pre><code>vcftools --gzvcf f090_snp_filtered.vcf.gz --out f096_qual --minQ 40 --recode</code></pre>
+<h2 id="include-known-identifiers-for-our-variants">Include known identifiers for our variants</h2>
+<p>We can use VCFtools to include variant names in the <em>ID</em> column of the VCF file.</p>
+<p>We can for instance code the information for the know SNPs in a file which will look like this:</p>
+<pre><code>#CHR    FROM    TO  ANNOTATION
+20  131785  131785  mySNPid1
+20  235987  235987  mySNPid3
+20  238627  238627  mySNPid4
+20  265205  265205  mySNPid5</code></pre>
+<p>Then we can include this information in our VCF file.</p>
+<p>First we will compress the annotation file to be used with tabix:</p>
+<pre><code>bgzip mock_snp_annotation.txt</code></pre>
+<p>And index it:</p>
+<pre><code>tabix -s 1 -b 2 -e 3 mock_snp_annotation.txt.gz</code></pre>
+<p>¿What do they mean the parameters <code>-s</code>, <code>-b</code> and <code>-e</code>?</p>
+<p>Then we can use the command <code>vcf-annotate</code> from VCFtools for inserting SNP IDs in the VCF file:</p>
+<pre><code>cat f090_snp_filtered.vcf | vcf-annotate -a mock_snp_annotation.txt.gz -c CHROM,FROM,TO,ID &gt; f100_snp_annotated.vcf</code></pre>
+<p>Notice that the input vcf file needs to be uncompressed… use <code>bgzip</code> to decompress the file before you call <code>vcf-annotate</code>.</p>
+<p>¿What does it mean the parameter <code>-c</code>?</p>
+<h2 id="include-gene-annotations">Include GENE annotations</h2>
+<p>We can use gen chromosome position to annotate our VCF file.</p>
+<p>Gen coordinates may be codded in a file which will look like this:</p>
+<pre><code>#CHR    FROM    TO  ANNOTATION
+20  131785  235987  myGENEid1
+20  238627  265205  myGENEid2</code></pre>
+<p>Prepare the file to be used by tabix:</p>
+<pre><code>bgzip mock_gen_annotation.txt
+tabix -s 1 -b 2 -e 3 mock_gen_annotation.txt.gz</code></pre>
+<p>Now we can use VCFtools <code>vcf-annotate</code> command to include the annotation into the VCF file:</p>
+<pre><code>cat f100_snp_annotated.vcf | vcf-annotate -a mock_gen_annotation.txt.gz -d key=INFO,ID=GN,Number=1,Type=String,Description=&#39;Gene Name&#39; -c CHROM,FROM,TO,INFO/GN &gt; f110_snp_and_gene_annotated.vcf</code></pre>
+</body>
+</html>
