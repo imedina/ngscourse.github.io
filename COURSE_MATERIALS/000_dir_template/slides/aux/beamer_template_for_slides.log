@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.1.15)  23 FEB 2014 00:51
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.1.15)  23 FEB 2014 02:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -938,7 +938,7 @@ Package: beamerfontthemestructurebold 2010/06/17  (rcs-revision d02a7cf4d8ae)
 Package: beamercolorthemecrane 2010/06/17  (rcs-revision d02a7cf4d8ae)
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 175.
-(aux/beamer_template_for_slides.aux)
+No file beamer_template_for_slides.aux.
 \openout1 = `beamer_template_for_slides.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 192.
@@ -957,7 +957,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 192.
 LaTeX Font Info:    ... okay on input line 192.
 LaTeX Font Info:    Try loading font information for T1+lmss on input line 192.
 
- (/usr/share/texmf/tex/latex/lm/t1lmss.fd
+(/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 *geometry* driver: auto-detecting
@@ -1037,8 +1037,6 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 192.
 LaTeX Info: Redefining \pageref on input line 192.
 LaTeX Info: Redefining \nameref on input line 192.
-
-(aux/beamer_template_for_slides.out) (aux/beamer_template_for_slides.out)
 \@outlinefile=\write5
 \openout5 = `beamer_template_for_slides.out'.
 
@@ -1111,7 +1109,8 @@ Dictionary: translator-theorem-dictionary, Language: English
 )
 LaTeX Info: Redefining \includegraphics on input line 192.
 
-(aux/beamer_template_for_slides.nav) (./010_title.tex)
+No file beamer_template_for_slides.nav.
+(./010_title.tex)
 
 Package hyperref Warning: Option `pdfauthor' has already been used,
 (hyperref)                setting the option has no effect on input line 203.
@@ -1188,7 +1187,7 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
  [5
 
 ]
-<images/smile.jpg, id=79, 695.59875pt x 695.59875pt>
+<images/smile.jpg, id=78, 695.59875pt x 695.59875pt>
 File: images/smile.jpg Graphic file (type jpg)
  <use images/smile.jpg>
 Package pdftex.def Info: images/smile.jpg used on input line 117.
@@ -1199,7 +1198,7 @@ Overfull \vbox (21.07623pt too high) detected at line 117
 
 [6
 
- <./images/smile.jpg>] <images/small.png, id=86, 80.3pt x 80.3pt>
+ <./images/smile.jpg>] <images/small.png, id=85, 80.3pt x 80.3pt>
 File: images/small.png Graphic file (type png)
 
 <use images/small.png>
@@ -1208,7 +1207,7 @@ Package pdftex.def Info: images/small.png used on input line 126.
  [7
 
  <./images/small.png>]
-<images/square.jpg, id=96, 397.485pt x 405.76593pt>
+<images/square.jpg, id=95, 397.485pt x 405.76593pt>
 File: images/square.jpg Graphic file (type jpg)
  <use images/square.jpg>
 Package pdftex.def Info: images/square.jpg used on input line 135.
@@ -1217,7 +1216,7 @@ Package pdftex.def Info: images/square.jpg used on input line 135.
 [8
 
  <./images/square.jpg>]
-<images/horizontal.jpg, id=103, 474.27188pt x 263.48438pt>
+<images/horizontal.jpg, id=102, 474.27188pt x 263.48438pt>
 File: images/horizontal.jpg Graphic file (type jpg)
 
 <use images/horizontal.jpg>
@@ -1226,7 +1225,7 @@ Package pdftex.def Info: images/horizontal.jpg used on input line 144.
  [9
 
  <./images/horizontal.jpg>]
-<images/vertical.jpg, id=110, 469.755pt x 815.045pt>
+<images/vertical.jpg, id=109, 469.755pt x 815.045pt>
 File: images/vertical.jpg Graphic file (type jpg)
  <use images/vertical.jpg>
 Package pdftex.def Info: images/vertical.jpg used on input line 153.
@@ -1274,10 +1273,10 @@ ged.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 217.
  ) 
 Here is how much of TeX's memory you used:
- 16343 strings out of 493307
- 301412 string characters out of 6139905
- 375149 words of memory out of 5000000
- 19332 multiletter control sequences out of 15000+600000
+ 16302 strings out of 493307
+ 300885 string characters out of 6139905
+ 375045 words of memory out of 5000000
+ 19299 multiletter control sequences out of 15000+600000
  45479 words of font info for 46 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  49i,16n,60p,466b,674s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1291,7 +1290,7 @@ pe1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsso10.pfb>
 </usr/share/texmf/fonts/type1/public/lm/lmsso8.pfb></usr/share/texmf/fonts/type
 1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/
 share/texmf/fonts/type1/public/lm/lmtt10.pfb>
-Output written on aux/beamer_template_for_slides.pdf (14 pages, 463576 bytes).
+Output written on aux/beamer_template_for_slides.pdf (14 pages, 463574 bytes).
 PDF statistics:
  195 PDF objects out of 1000 (max. 8388607)
  143 compressed objects within 2 object streams
