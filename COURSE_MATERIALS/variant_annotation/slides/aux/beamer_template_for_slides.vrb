@@ -1,0 +1,23 @@
+\frametitle{Slide with subsections}
+
+\begin{block}{Subsection one}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  something here
+\item
+  more here
+\end{itemize}
+
+\end{block}
+
+\begin{block}{Subsection two}
+
+\begin{verbatim}
+verbatim here
+more
+\end{verbatim}
+
+\end{block}
+
