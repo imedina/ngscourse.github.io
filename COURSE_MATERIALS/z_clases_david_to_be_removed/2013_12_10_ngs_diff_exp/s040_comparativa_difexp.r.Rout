@@ -1,0 +1,183 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##s040_comparativa_difexp.r
+> ##2013-12-10 dmontaner@cipf.es
+> ## data form Leidinger 2013: GSE46579
+> 
+> date ()
+[1] "Tue Dec 10 17:10:34 2013"
+> Sys.info ()[c("nodename", "user")]
+   nodename        user 
+     "dlap" "dmontaner" 
+> commandArgs ()
+[1] "/usr/local/lib64/R/bin/exec/R"                                                                                          
+[2] "-f"                                                                                                                     
+[3] "/home/dmontaner/documentos/masterUV/ESTUDIOS_IN_SILICO_EN_BIOMEDICINA/2013_12_10_ngs_diff_exp/s040_comparativa_difexp.r"
+[4] "--restore"                                                                                                              
+[5] "--save"                                                                                                                 
+[6] "--no-readline"                                                                                                          
+[7] "--no-save"                                                                                                              
+[8] "--no-restore"                                                                                                           
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.1 (2013-05-16)"
+[1] "R version 3.0.2 (2013-09-25)"
+> library (edgeR); packageDescription ("edgeR", fields = "Version") #"3.2.4"
+Loading required package: limma
+[1] "3.4.2"
+> library (limma); packageDescription ("limma", fields = "Version") #"3.2.4"
+[1] "3.18.3"
+> 
+> 
+> ##' ##' # DATOS
+> ficheros <- c("res_foldchange.RData", "res_edger.RData", "res_limma.RData")
+> 
+> for (fi in ficheros) {
++   load (fi)
++ }
+> rm (fi, co, ficheros)
+Warning message:
+In rm(fi, co, ficheros) : object 'co' not found
+> ls ()
+[1] "mifold"        "res.edger.cls" "res.edger.glm" "res.limma"    
+> 
+> 
+> 
+> ##' Compare
+> ##' ============================================================================
+> table (names (mifold) == rownames (res.edger.cls))
+
+TRUE 
+ 503 
+> table (names (mifold) == rownames (res.edger.cls))
+
+TRUE 
+ 503 
+> 
+> table (names (mifold) == rownames (res.limma))
+
+TRUE 
+ 503 
+> 
+> 
+> ##' FoldChanges
+> ##' ----------------------------------------------------------------------------
+> par (mfrow = c(1,3))
+> ##
+> plot (mifold, res.edger.cls$table[,"logFC"], main = "edger.cls")
+> abline (0, 1, col = "blue")
+> ##
+> plot (mifold, res.edger.glm$table[,"logFC"], main = "edger.glm")
+> abline (0, 1, col = "blue")
+> ##
+> plot (mifold, res.limma$coefficients[,"disease"], main = "limma")
+> abline (0, 1, col = "blue")
+> ##
+> 
+> round (cor (cbind (mifold = mifold,
++                    edger.cls = res.edger.cls$table[,"logFC"],
++                    edger.glm = res.edger.glm$table[,"logFC"],
++                    limma = res.limma$coefficients[,"disease"]
++                    )), 2)
+          mifold edger.cls edger.glm limma
+mifold      1.00      0.91      0.91  0.87
+edger.cls   0.91      1.00      1.00  0.94
+edger.glm   0.91      1.00      1.00  0.94
+limma       0.87      0.94      0.94  1.00
+>        
+> 
+> ##' Pvalues
+> ##' ----------------------------------------------------------------------------
+> par (mfrow = c(1,3))
+> ##
+> plot (mifold, res.edger.cls$table[,"PValue"], main = "edger.cls")
+> abline (0, 1, col = "blue")
+> ##
+> plot (mifold, res.edger.glm$table[,"PValue"], main = "edger.glm")
+> abline (0, 1, col = "blue")
+> ##
+> plot (mifold, res.limma$p.value[,"disease"], main = "limma")
+> abline (0, 1, col = "blue")
+> 
+> 
+> par (mfrow = c(1,3))
+> ##
+> plot (res.edger.cls$table[,"PValue"], res.edger.cls$table[,"PValue"], main = "edger.cls")
+> abline (0, 1, col = "blue")
+> ##
+> plot (res.edger.cls$table[,"PValue"], res.edger.glm$table[,"PValue"], main = "edger.glm")
+> abline (0, 1, col = "blue")
+> ##
+> plot (res.edger.cls$table[,"PValue"], res.limma$p.value[,"disease"], main = "limma")
+> abline (0, 1, col = "blue")
+> 
+> 
+> ##' ### Log scale
+> log1 <- function (x) {
++   log (1 + x)
++ }
+> 
+> par (mfrow = c(1,3))
+> ##
+> plot (log1 (res.edger.cls$table[,"PValue"]), log1 (res.edger.cls$table[,"PValue"]), main = "edger.cls")
+> abline (0, 1, col = "blue")
+> ##
+> plot (log1 (res.edger.cls$table[,"PValue"]), log1 (res.edger.glm$table[,"PValue"]), main = "edger.glm")
+> abline (0, 1, col = "blue")
+> ##
+> plot (log1 (res.edger.cls$table[,"PValue"]), log1 (res.limma$p.value[,"disease"]), main = "limma")
+> abline (0, 1, col = "blue")
+> 
+> ##' ----------------------------------------------------------------------------
+> 
+> round (cor (cbind (edger.cls = res.edger.cls$table[,"PValue"],
++                    edger.glm = res.edger.glm$table[,"PValue"],
++                    limma = res.limma$p.value[,"disease"])), 2)
+          edger.cls edger.glm limma
+edger.cls      1.00      0.98  0.75
+edger.glm      0.98      1.00  0.75
+limma          0.75      0.75  1.00
+> 
+> 
+> ###EXIT
+> warnings ()
+Warning message:
+In rm(fi, co, ficheros) : object 'co' not found
+> sessionInfo ()
+R version 3.0.2 (2013-09-25)
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=es_ES.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=es_ES.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=es_ES.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=es_ES.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] edgeR_3.4.2  limma_3.18.3
+> #q ("no")
+> 
+> proc.time()
+   user  system elapsed 
+  0.690   0.024   0.702 

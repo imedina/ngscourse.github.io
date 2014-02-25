@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NGS: RNA-seq Analysis (12-11-2013)</title>
+  <style>
+  html {
+      color:#000;
+      background:#FFF;
+  }
+  
+  body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
+      margin:0;
+      padding:0;
+  }
+  
+  table {
+      border-spacing:0;
+      font-size:inherit;
+      font:100%;
+      max-width:100%;
+      background-color:transparent;
+      border:1px solid #DDD;
+      border-left:0;
+      border-collapse:collapsed;
+      -webkit-border-radius:4px;
+      -moz-border-radius:4px;
+      border-radius:4px;
+  }
+  
+  fieldset,img {
+      border:0;
+  }
+  
+  address,caption,cite,code,dfn,em,strong,th,var {
+      font-style:normal;
+      font-weight:400;
+  }
+  
+  ol,ul {
+      list-style:none;
+  }
+  
+  caption,th {
+      text-align:left;
+  }
+  
+  h1,h2,h3,h4,h5,h6 {
+      font-size:100%;
+      font-weight:400;
+      color:#20639b;
+      margin:1em 0;
+  }
+  
+  q:before,q:after {
+      content:'';
+  }
+  
+  abbr,acronym {
+      border:0;
+      font-variant:normal;
+      border-bottom:1px dotted #000;
+      cursor:help;
+  }
+  
+  sup {
+      vertical-align:text-top;
+  }
+  
+  sub {
+      vertical-align:text-bottom;
+  }
+  
+  input,textarea,select {
+      font-family:inherit;
+      font-weight:inherit;
+      font-size:100%;
+  }
+  
+  legend {
+      color:#000;
+  }
+  
+  h1,h2,h3,h4,h5,h6,strong {
+      font-weight:700;
+  }
+  
+  em {
+      font-style:italic;
+  }
+  
+  blockquote,ul,ol,dl {
+      margin:1em;
+  }
+  
+  ol,ul,dl {
+      margin-left:2em;
+  }
+  
+  ol {
+      list-style:decimal outside;
+  }
+  
+  ul {
+      list-style:disc outside;
+  }
+  
+  dl dd {
+      margin-left:1em;
+  }
+  
+  th,td {
+      line-height:1.125em;
+      text-align:left;
+      vertical-align:top;
+      border-top:1px solid #DDD;
+      border-left:1px solid #DDD;
+      padding:.5em;
+  }
+  
+  th {
+      font-weight:700;
+      text-align:center;
+      color:#20639b;
+  }
+  
+  table thead:first-child tr:first-child th,table tbody:first-child tr:first-child th,table tbody:first-child tr:first-child td {
+      border-top:0;
+  }
+  
+  table thead:first-child tr:first-child th:first-child,table tbody:first-child tr:first-child td:first-child {
+      -webkit-border-radius:4px 0 0 0;
+      -moz-border-radius:4px 0 0;
+      border-radius:4px 0 0 0;
+  }
+  
+  table thead:first-child tr:first-child th:last-child,table tbody:first-child tr:first-child td:last-child {
+      -webkit-border-radius:0 4px 0 0;
+      -moz-border-radius:0 4px 0 0;
+      border-radius:0 4px 0 0;
+  }
+  
+  table thead:last-child tr:last-child th:first-child,table tbody:last-child tr:last-child td:first-child {
+      -webkit-border-radius:0 0 0 4px;
+      -moz-border-radius:0 0 0 4px;
+      border-radius:0 0 0 4px;
+  }
+  
+  table thead:last-child tr:last-child th:last-child,table tbody:last-child tr:last-child td:last-child {
+      -webkit-border-radius:0 0 4px 0;
+      -moz-border-radius:0 0 4px;
+      border-radius:0 0 4px 0;
+  }
+  
+  table tbody tr:nth-child(odd) td,table tbody tr:nth-child(odd) th {
+      background-color:#f9f9f9;
+  }
+  
+  caption {
+      margin-bottom:.5em;
+      text-align:center;
+  }
+  
+  p,fieldset,table,pre {
+      margin-top:.5em;
+      margin-bottom:.5em;
+  }
+  
+  body {
+      font:16px/1.4 "Helvetica Neue", Helvetica, "Open Sans", Arial, sans-serif;
+      color:#333;
+      /*max-width:960px;*/
+      /*margin:0 auto;*/
+      margin:1em;
+  }
+  
+  pre,code,kbd,samp,tt {
+      font-family:monospace;
+      font-size:90%;
+      line-height:100%;
+  }
+  
+  h1 {
+      font-size:200%;
+      border-bottom:2px dotted #ddd;
+  }
+  
+  a,a:visited,code {
+      /*color:#f06024;*/
+      color:#20639b;
+  }
+  
+  a:link {text-decoration:none;}    /* unvisited link */
+  a:visited {text-decoration:none;} /* visited link */
+  a:hover {text-decoration:underline;}   /* mouse over link */
+  a:active {text-decoration:underline;}  /* selected link */
+  
+  
+  h2 {
+      font-size:160%;
+  }
+  
+  h3 {
+      font-size:120%;
+  }
+  
+  h4 {
+      font-size:110%;
+  }
+  
+  h5 {
+      font-size:95%;
+  }
+  
+  h6 {
+      font-size:90%;
+      color:#999;
+  }
+  
+  dl {
+      margin:0 0 1.125em;
+  }
+  
+  dt {
+      font-weight:700;
+      line-height:1.125em;
+  }
+  
+  dd {
+      margin-left:1em;
+      line-height:1.125em;
+  }
+  
+  pre,blockquote {
+      border:1px solid #ddd;
+      background-color:#f1f1f1;
+      -webkit-border-radius:6px;
+      -moz-border-radius:6px;
+      border-radius:6px;
+      padding:10px;
+  }
+  
+  blockquote {
+      margin:1em 2.5em;
+  }
+  
+  code {
+      color:#20639b;
+      background:#f1f1f1;
+  }
+  
+  img {
+      max-width:100%;
+  }
+  
+  ol[type=1] {
+      list-style-type:decimal;
+  }
+  
+  ol[type=a] {
+      list-style-type:lower-alpha;
+  }
+  
+  ol[type=A] {
+      list-style-type:upper-alpha;
+  }
+  
+  ol[type=I] {
+      list-style-type:upper-roman;
+  }
+  
+  ol[type=i] {
+      list-style-type:lower-roman;
+  }
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">NGS: RNA-seq Analysis (12-11-2013)</h1>
+</div>
+<!--
+Clean the starting dataset
+================================================================================
+
+    rm -r data/*
+    cp data0/f* data/
+    cd data
+-->
+
+
+<h1 id="preliminaries">Preliminaries</h1>
+<h2 id="software-used-in-this-practical">Software used in this practical</h2>
+<ul>
+<li><a href="http://tophat.cbcb.umd.edu">TopHat 2</a>: A fast splice junction mapper for RNA-Seq reads. Depends on <a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">Bowtie 2</a>.</li>
+<li><a href="http://samtools.sourceforge.net">SAMtools</a>: Tool for aligning sequencing reads to long reference sequences.</li>
+<li><a href="http://cufflinks.cbcb.umd.edu/">Cufflinks</a>: Transcript assembly, differential expression, and differential regulation for RNA-Seq</li>
+</ul>
+<!-- Tool References -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="file-formats">File formats:</h2>
+<ul>
+<li>FastQ: see <a href="http://en.wikipedia.org/wiki/FASTQ_format">Wikipedia</a> and <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847217">NAR 2010</a> specifications.</li>
+<li>SAM/BAM: see <a href="http://samtools.sourceforge.net/SAM1.pdf">SAMtools</a> and <a href="http://genome.ucsc.edu/goldenPath/help/bam.html">UCSC</a> specifications.</li>
+<li>GTF: see <a href="http://www.ensembl.org/info/website/upload/gff.html">Ensembl</a> and <a href="http://genome.ucsc.edu/FAQ/FAQformat.html#format4">UCSC</a> specifications.</li>
+</ul>
+<!-- File Format References -->
+
+
+
+
+
+
+
+
+
+
+
+<h3 id="sam-format">SAM format</h3>
+<p>The SAM (Sequence Alignment/Map) format is described <a href="http://samtools.sourceforge.net/SAM1.pdf">here</a>. It is basically a TAB-delimited file with an optional <strong>header section</strong> and an <strong>alignment section</strong>.</p>
+<p>The alignment of each read is described in a row of the file <strong>11 fields</strong>:</p>
+<ol style="list-style-type: decimal">
+<li>QNAME: read name</li>
+<li>FLAG: bitwise flag (See <a href="http://picard.sourceforge.net/explain-flags.html">here</a> for interpretation)</li>
+<li>RNAME: chromosome</li>
+<li>POS: leftmost genomic position</li>
+<li>MAPQ: mapping quality ([Phred scale][phred-quality-score-wikipedia])</li>
+<li>CIGAR: CIGAR string (gaps, clipping)</li>
+<li>RNEXT: paired read name</li>
+<li>PNEXT: paired read position</li>
+<li>TLEN: total length of template</li>
+<li>SEQ: read base sequence</li>
+<li>QUAL: read base quality</li>
+</ol>
+<p>We can use [SAMtools][samtools-man] to explore and analyze the results of our mapping. Read the [SAMtools manual][samtools-man] for details on the available tools.</p>
+<h2 id="paired-end-sequencing">Paired-End Sequencing</h2>
+<p>Find a short introduction to <em>paired end</em> sequencing from Illumina in:</p>
+<p><a href="http://www.illumina.com/technology/paired_end_sequencing_assay.ilmn"><code class="url">http://www.illumina.com/technology/paired_end_sequencing_assay.ilmn</code></a></p>
+<h1 id="description">Description</h1>
+<p>RNA from two biological samples:</p>
+<ul>
+<li>case sample: <strong>case</strong></li>
+<li>control sample: <strong>cont</strong></li>
+</ul>
+<p>has been sequenced using Illumina Paired-End technology.</p>
+<p>Thus we have two fastq files for each sample:</p>
+<ul>
+<li>f010_case1.fastq and f010_case2.fastq for the <strong>case</strong> sample</li>
+<li>f010_cont1.fastq and f010_cont2.fastq for the <strong>control</strong> sample</li>
+</ul>
+<p>We will perform a differential expression analysis between the two samples.</p>
+<p>The two samples are form human so we will take advantage of the fact that there is an <strong>annotated reference genome</strong> that we can use.</p>
+<p>For the practical the sequence is available in file:</p>
+<ul>
+<li>f000_reference.fa</li>
+</ul>
+<p>And the description of the genomic features in this genome is available in the file:</p>
+<ul>
+<li>f000_reference.gtf</li>
+</ul>
+<h1 id="exercise">Exercise</h1>
+<p>Explore the reference genome, its annotation and the raw data:</p>
+<ul>
+<li>How many chromosomes are in the reference genome.</li>
+<li>How many genes, transcripts...</li>
+<li>How many reads are there in each raw data file</li>
+</ul>
+<h2 id="map-against-the-reference-genome-using-bowtie2">Map against the reference genome using bowtie2</h2>
+<p>Fist we need to <strong>build an index</strong> for bowtie:</p>
+<pre><code>bowtie2-build f000_reference.fa f000_reference</code></pre>
+<p>And now we can run the <strong>alignments</strong> for the <strong>paired end</strong> files:</p>
+<pre><code>tophat2 --read-mismatches 2 --read-gap-length 2 -r 200 -o f020_tophat_out_case f000_reference f010_case1.fastq f010_case2.fastq
+tophat2 --read-mismatches 2 --read-gap-length 2 -r 200 -o f020_tophat_out_cont f000_reference f010_cont1.fastq f010_cont2.fastq</code></pre>
+<p>Convert to SAM (text file) in order to explore them:</p>
+<pre><code>samtools view f020_tophat_out_case/accepted_hits.bam &gt; f025_accepted_case.sam
+samtools view f020_tophat_out_cont/accepted_hits.bam &gt; f025_accepted_cont.sam</code></pre>
+<p>Explore the first 2 lines of the SAM file</p>
+<pre><code>head -n 2 f025_accepted_case.sam</code></pre>
+<p>Find out the original reads in the fastq files:</p>
+<pre><code>grep &quot;_436_38_1_0_0_0_1:0:0_1:0:0_0&quot; f010*</code></pre>
+<p>See the sequence of the first read:</p>
+<pre><code>grep -A 2 &quot;_436_38_1_0_0_0_1:0:0_1:0:0_0&quot; f010*</code></pre>
+<p>and compare them with the corresponding alignments in the SAM file:</p>
+<pre><code>grep &quot;_436_38_1_0_0_0_1:0:0_1:0:0_0&quot; f025_accepted_case.sam</code></pre>
+<h3 id="remarks">Remarks:</h3>
+<ul>
+<li>The read name is duplicated</li>
+<li>Use <a href="http://picard.sourceforge.net/explain-flags.html">this web</a> to interpret the FLAG field from the SAM format.</li>
+<li><p>The RNEXT field (7) is set to &quot;=&quot; meaning that the paired end reads are called the same.</p>
+<p>cut -f 7 f025_accepted_case.sam | head</p></li>
+<li><p>The PNEXT (8) field coincides with the POS (4) field (but with the interchange in the rows).</p>
+<p>grep &quot;_436_38_1_0_0_0_1:0:0_1:0:0_0&quot; f025_accepted_case.sam | cut -f4,8</p></li>
+<li>The total length of template (TLEN, column 9) coincides with the difference between the two middle positions of the reads 8735 = 77023-68388+100</li>
+<li><p>There is an extra field (number 12; remember that the SAM format had just 11 mandatory fields) find the meaning in the SAM format specifications.</p>
+<p>cut -f 12- f025_accepted_case.sam | head</p></li>
+</ul>
+<h2 id="differential-expression-using-cuffdiff">Differential expression using Cuffdiff</h2>
+<p>Using the information in the GTF file:</p>
+<pre><code>cuffdiff -o f030_cuffdiff_out f000_reference.gtf f020_tophat_out_case/accepted_hits.bam f020_tophat_out_cont/accepted_hits.bam</code></pre>
+<p>Explore the results.</p>
+</body>
+</html>

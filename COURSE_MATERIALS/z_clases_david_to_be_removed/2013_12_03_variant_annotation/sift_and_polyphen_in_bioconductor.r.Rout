@@ -1,0 +1,583 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> ##sift_and_polyphen_in_bioconductor.r
+> ##2013-12-03 dmontaner@cipf.es
+> ##We explore the Bioconductor libraries which contain SIFT and PolyPhen data
+> 
+> 
+> date ()
+[1] "Tue Dec  3 16:40:45 2013"
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.2 (2013-05-16)"
+[1] "R version 3.0.2 (2013-09-25)"
+> 
+> 
+> ##' You may need to install the libraries
+> 
+> # source ("http://bioconductor.org/biocLite.R")
+> # biocLite ("SIFT.Hsapiens.dbSNP132")
+> # biocLite ("PolyPhen.Hsapiens.dbSNP131")
+> 
+> 
+> 
+> ##' SIFT library
+> ##' ============================================================================
+> 
+> 
+> ##' Load the SIFT library and see the package description:
+> library (SIFT.Hsapiens.dbSNP132); packageDescription ("SIFT.Hsapiens.dbSNP132", fields = "Version") ##"1.0.2"
+Loading required package: VariantAnnotation
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following object is masked from ‘package:stats’:
+
+    xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, as.vector, cbind, colnames,
+    duplicated, eval, evalq, Filter, Find, get, intersect, is.unsorted,
+    lapply, Map, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, Position, rank, rbind, Reduce, rep.int, rownames,
+    sapply, setdiff, sort, table, tapply, union, unique, unlist
+
+Loading required package: GenomicRanges
+Loading required package: IRanges
+Loading required package: XVector
+Loading required package: Rsamtools
+Loading required package: Biostrings
+
+Attaching package: ‘VariantAnnotation’
+
+The following object is masked from ‘package:base’:
+
+    tabulate
+
+Loading required package: RSQLite
+Loading required package: DBI
+[1] "1.0.2"
+> help (package = SIFT.Hsapiens.dbSNP132)
+
+		Information on package ‘SIFT.Hsapiens.dbSNP132’
+
+Description:
+
+Package:       SIFT.Hsapiens.dbSNP132
+Title:         SIFT Predictions for Homo sapiens dbSNP build 132
+Description:   Database of SIFT predictions for Homo sapiens dbSNP
+               build 132
+Version:       1.0.2
+Author:        Valerie Obenchain
+Maintainer:    Valerie Obenchain <vobencha@fhcrc.org>
+Depends:       VariantAnnotation, RSQLite (>= 0.11.0)
+Imports:       AnnotationDbi
+License:       Artistic-2.0
+organism:      Homo sapiens
+species:       Human
+provider:      SIFT
+source_url:    http://sift.jcvi.org/
+biocViews:     AnnotationData, Genetics, Homo_sapiens
+Packaged:      2012-03-13 23:16:16 UTC; vobencha
+Built:         R 3.0.2; ; 2013-12-03 12:17:33 UTC; unix
+
+Index:
+
+SIFT.Hsapiens.dbSNP132
+                        SIFT predictions for Homo sapiens dbSNP build
+                        132
+
+> 
+> ##' explore the class of the SIFT object:
+> class (SIFT.Hsapiens.dbSNP132)
+[1] "SIFTDb"
+attr(,"package")
+[1] "VariantAnnotation"
+> help ("SIFTDb-class")
+SIFTDb-class         package:VariantAnnotation         R Documentation
+
+_S_I_F_T_D_b _o_b_j_e_c_t_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The SIFTDb class is a container for storing a connection to a SIFT
+     sqlite database.
+
+_D_e_t_a_i_l_s:
+
+     SIFT is a sequence homology-based tool that sorts intolerant from
+     tolerant amino acid substitutions and predicts whether an amino
+     acid substitution in a protein will have a phenotypic effect. SIFT
+     is based on the premise that protein evolution is correlated with
+     protein function. Positions important for function should be
+     conserved in an alignment of the protein family, whereas
+     unimportant positions should appear diverse in an alignment.
+
+     SIFT uses multiple alignment information to predict tolerated and
+     deleterious substitutions for every position of the query
+     sequence.  The procedure can be outlined in the following steps,
+
+        • search for similar sequences
+
+        • choose closely related sequences that may share similar
+          function to the query sequence
+
+        • obtain the alignment of the chosen sequences
+
+        • calculate normalized probabilities for all possible
+          substitutions from the alignment.
+
+     Positions with normalized probabilities less than 0.05 are
+     predicted to be deleterious, those greater than or equal to 0.05
+     are predicted to be tolerated.
+
+_M_e_t_h_o_d_s:
+
+     In the code below, ‘x’ is a ‘SIFTDb’ object.
+
+‘metadata(x)’: Returns ‘x’'s metadata in a data frame.
+
+‘columns(x)’: Returns the names of the ‘columns’ that can be used to
+          subset the data columns.
+
+‘keys(x)’: Returns the names of the ‘keys’ that can be used to subset
+          the data rows. The ‘keys’ values are the rsid's.
+
+‘select(x, keys = NULL, columns = NULL, ...)’: Returns a subset of data
+          defined by the character vectors ‘keys’ and ‘columns’. If no
+          ‘keys’ are supplied, all rows are returned. If no ‘columns’
+          are supplied, all columns are returned. For column
+          descriptions see ‘?SIFTDbColumns’.
+
+_A_u_t_h_o_r(_s):
+
+     Valerie Obenchain <vobencha@fhcrc.org>
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     SIFT Home: <URL: http://sift.jcvi.org/>
+
+     Kumar P, Henikoff S, Ng PC. Predicting the effects of coding
+     non-synonymous variants on protein function using the SIFT
+     algorithm. Nat Protoc.  2009;4(7):1073-81
+
+     Ng PC, Henikoff S. Predicting the Effects of Amino Acid
+     Substitutions on Protein Function Annu Rev Genomics Hum Genet.
+     2006;7:61-80.
+
+     Ng PC, Henikoff S. SIFT: predicting amino acid changes that affect
+     protein function. Nucleic Acids Res. 2003 Jul 1;31(13):3812-4.
+
+_E_x_a_m_p_l_e_s:
+
+     library(SIFT.Hsapiens.dbSNP132)
+     
+     ## metadata
+     metadata(SIFT.Hsapiens.dbSNP132)
+     
+     ## available rsid's 
+     head(keys(SIFT.Hsapiens.dbSNP132))
+     
+     ## for column descriptions see ?SIFTDbColumns
+     columns(SIFT.Hsapiens.dbSNP132)
+     
+     ## subset on keys and columns 
+     rsids <- c("rs2142947", "rs17970171", "rs8692231", "rs3026284") 
+     subst <- c("RSID", "PREDICTION", "SCORE")
+     select(SIFT.Hsapiens.dbSNP132, keys=rsids, columns=subst)
+     select(SIFT.Hsapiens.dbSNP132, keys=rsids[1:2])
+     
+
+> 
+> 
+> ##' Get informatioin about the database:
+> metadata (SIFT.Hsapiens.dbSNP132)
+                              name                                        value
+1                          Db type                                       SIFTDb
+2                      Data source                                         SIFT
+3                           Genome                                         hg19
+4                Genus and Species                                 Homo sapiens
+5                     Resource URL                        http://sift.jcvi.org/
+6                      dbSNP build                                          132
+7                    Creation time 2012-03-13 16:15:13 -0700 (Tue, 13 Mar 2012)
+8 RSQLite version at creation time                                       0.11.1
+9                          package                            VariantAnnotation
+> 
+> 
+> ## Get the names of the fields available in the database:
+> columns (SIFT.Hsapiens.dbSNP132)
+ [1] "RSID"        "PROTEINID"   "AACHANGE"    "METHOD"      "AA"         
+ [6] "PREDICTION"  "SCORE"       "MEDIAN"      "POSTIONSEQS" "TOTALSEQS"  
+> 
+> 
+> ##' Get SIFT information for a subset of SNPs:
+> rsids <- c ("rs17970171", "rs2142947", "rs3026284")
+> select (SIFT.Hsapiens.dbSNP132, keys = rsids)
+         RSID    PROTEINID AACHANGE    METHOD AA  PREDICTION SCORE MEDIAN
+1  rs17970171 NP_001045928     D18H BEST HITS  H  NOT SCORED  <NA>   <NA>
+2  rs17970171 NP_001045928     D18H BEST HITS  D  NOT SCORED  <NA>   <NA>
+3  rs17970171 NP_001045928     D18H  ALL HITS  H  NOT SCORED  <NA>   <NA>
+4  rs17970171 NP_001045928     D18H  ALL HITS  D  NOT SCORED  <NA>   <NA>
+5   rs2142947 NP_001019832    F430L BEST HITS  L   TOLERATED  1.00   2.40
+6   rs2142947 NP_001019832    F430L BEST HITS  F   TOLERATED  0.74   2.40
+7   rs2142947 NP_001019832    F430L  ALL HITS  L   TOLERATED  0.72   3.34
+8   rs2142947 NP_001019832    F430L  ALL HITS  F   TOLERATED     1   3.34
+9   rs3026284    NP_004920    G202D BEST HITS  D DELETERIOUS  0.03   2.02
+10  rs3026284    NP_004920    G202D BEST HITS  G   TOLERATED  1.00   2.02
+11  rs3026284    NP_004920    G202D  ALL HITS  D DELETERIOUS  0.00   3.82
+12  rs3026284    NP_004920    G202D  ALL HITS  G   TOLERATED     1   3.82
+   POSITIONSEQS TOTALSEQS
+1          <NA>      <NA>
+2          <NA>      <NA>
+3          <NA>      <NA>
+4          <NA>      <NA>
+5            22        27
+6            22        27
+7            96        99
+8            96        99
+9            81        98
+10           81        98
+11           82        82
+12           82        82
+> 
+> 
+> ##' Get SIFT information just for some columns:
+> subst <- c ("RSID", "METHOD", "PREDICTION", "SCORE")
+> select (SIFT.Hsapiens.dbSNP132, keys = rsids, columns = subst)
+         RSID    METHOD  PREDICTION SCORE
+1  rs17970171 BEST HITS  NOT SCORED  <NA>
+2  rs17970171  ALL HITS  NOT SCORED  <NA>
+3   rs2142947 BEST HITS   TOLERATED  1.00
+4   rs2142947 BEST HITS   TOLERATED  0.74
+5   rs2142947  ALL HITS   TOLERATED  0.72
+6   rs2142947  ALL HITS   TOLERATED     1
+7   rs3026284 BEST HITS DELETERIOUS  0.03
+8   rs3026284 BEST HITS   TOLERATED  1.00
+9   rs3026284  ALL HITS DELETERIOUS  0.00
+10  rs3026284  ALL HITS   TOLERATED     1
+> 
+> 
+> 
+> 
+> ##' PolyPhen library
+> ##' ============================================================================
+> 
+> 
+> ##' Load the PolyPhen library and see the package description:
+> library (PolyPhen.Hsapiens.dbSNP131); packageDescription ("PolyPhen.Hsapiens.dbSNP131", fields = "Version") ##"1.0.2"
+[1] "1.0.2"
+> help (package = PolyPhen.Hsapiens.dbSNP131)
+
+		Information on package ‘PolyPhen.Hsapiens.dbSNP131’
+
+Description:
+
+Package:       PolyPhen.Hsapiens.dbSNP131
+Title:         PolyPhen Predictions for Homo sapiens dbSNP build 131
+Description:   Database of PolyPhen predictions for Homo sapiens dbSNP
+               build 131
+Version:       1.0.2
+Author:        Valerie Obenchain
+Maintainer:    Valerie Obenchain <vobencha@fhcrc.org>
+Depends:       VariantAnnotation, RSQLite (>= 0.11.0)
+Imports:       AnnotationDbi
+License:       Artistic-2.0
+organism:      Homo sapiens
+species:       Human
+provider:      PolyPhen2
+source_url:    http://genetics.bwh.harvard.edu/pph2/dokuwiki/downloads
+biocViews:     AnnotationData, Genetics, Homo_sapiens
+Packaged:      2012-03-13 23:16:49 UTC; vobencha
+Built:         R 3.0.2; ; 2013-12-03 12:23:55 UTC; unix
+
+Index:
+
+PolyPhen.Hsapiens.dbSNP131
+                        PolyPhen predictions for Homo sapiens dbSNP
+                        build 131
+
+> 
+> ##' explore the class of the PolyPhen object:
+> class (PolyPhen.Hsapiens.dbSNP131)
+[1] "PolyPhenDb"
+attr(,"package")
+[1] "VariantAnnotation"
+> help ("PolyPhenDb-class")
+PolyPhenDb-class       package:VariantAnnotation       R Documentation
+
+_P_o_l_y_P_h_e_n_D_b _o_b_j_e_c_t_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The PolyPhenDb class is a container for storing a connection to a
+     PolyPhen sqlite database.
+
+_D_e_t_a_i_l_s:
+
+     PolyPhen (Polymorphism Phenotyping) is a tool which predicts the
+     possible impact of an amino acid substitution on the structure and
+     function of a human protein by applying empirical rules to the
+     sequence, phylogenetic and structural information characterizing
+     the substitution.
+
+     PolyPhen makes its predictions using UniProt features, PSIC
+     profiles scores derived from multiple alignment and matches to PDP
+     or PQS structural databases. The procedure can be roughly outlined
+     in the following steps, see the references for complete details,
+
+        • sequence-based characterization of substitution site
+
+        • calculation of PSIC profile scores for two amino acid
+          variants
+
+        • calculation of structural parameters and contacts
+
+        • prediction
+
+     PolyPhen uses empirically derived rules to predict that a
+     non-synonymous SNP is
+
+        • probably damaging : it is with high confidence supposed to
+          affect protein function or structure
+
+        • possibly damaging : it is supposed to affect protein function
+          or structure
+
+        • benign : most likely lacking any phenotypic effect
+
+        • unknown : when in some rare cases, the lack of data do not
+          allow PolyPhen to make a prediction
+
+_M_e_t_h_o_d_s:
+
+     In the code below, ‘x’ is a ‘PolyPhenDb’ object.
+
+‘metadata(x)’: Returns ‘x’'s metadata in a data frame.
+
+‘columns(x)’: Returns the names of the ‘columns’ that can be used to
+          subset the data columns. For column descriptions see
+          ‘?PolyPhenDbColumns’.
+
+‘keys(x)’: Returns the names of the ‘keys’ that can be used to subset
+          the data rows. The ‘keys’ values are the rsid's.
+
+‘select(x, keys = NULL, columns = NULL, ...)’: Returns a subset of data
+          defined by the character vectors ‘keys’ and ‘columns’. If no
+          ‘keys’ are supplied, all rows are returned. If no ‘columns’
+          are supplied, all columns are returned. See
+          ‘?PolyPhenDbColumns’ for column descriptions.
+
+‘duplicateRSID(x)’: Returns a named list of duplicate rsid groups. The
+          names are the ‘keys’, the list elements are the rsid's that
+          have been reported as having identical chromosome position
+          and alleles and therefore translating into the same amino
+          acid residue substitution.
+
+_A_u_t_h_o_r(_s):
+
+     Valerie Obenchain <vobencha@fhcrc.org>
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     PolyPhen Home: <URL:
+     http://genetics.bwh.harvard.edu/pph2/dokuwiki/>
+
+     Adzhubei IA, Schmidt S, Peshkin L, Ramensky VE, Gerasimova A, Bork
+     P, Kondrashov AS, Sunyaev SR. Nat Methods 7(4):248-249 (2010).
+
+     Ramensky V, Bork P, Sunyaev S. Human non-synonymous SNPs: server
+     and survey. Nucleic Acids Res 30(17):3894-3900 (2002).
+
+     Sunyaev SR, Eisenhaber F, Rodchenkov IV, Eisenhaber B, Tumanyan
+     VG, Kuznetsov EN. PSIC: profile extraction from sequence
+     alignments with position-specific counts of independent
+     observations. Protein Eng 12(5):387-394 (1999).
+
+_S_e_e _A_l_s_o:
+
+     ‘?PolyPhenDbColumns’
+
+_E_x_a_m_p_l_e_s:
+
+     library(PolyPhen.Hsapiens.dbSNP131)
+     
+     ## metadata
+     metadata(PolyPhen.Hsapiens.dbSNP131)
+     
+     ## available rsid's 
+     head(keys(PolyPhen.Hsapiens.dbSNP131))
+     
+     ## column descriptions found at ?PolyPhenDbColumns
+     columns(PolyPhen.Hsapiens.dbSNP131)
+     
+     ## subset on keys and columns 
+     subst <- c("AA1", "AA2", "PREDICTION")
+     rsids <- c("rs2142947", "rs4995127", "rs3026284")
+     select(PolyPhen.Hsapiens.dbSNP131, keys=rsids, columns=subst)
+     
+     ## retrieve substitution scores 
+     subst <- c("IDPMAX", "IDPSNP", "IDQMIN")
+     select(PolyPhen.Hsapiens.dbSNP131, keys=rsids, columns=subst)
+     
+     ## retrieve the PolyPhen-2 classifiers 
+     subst <- c("PPH2CLASS", "PPH2PROB", "PPH2FPR", "PPH2TPR", "PPH2FDR")
+     select(PolyPhen.Hsapiens.dbSNP131, keys=rsids, columns=subst)
+     
+     ## duplicate groups of rsid's
+     duplicateRSID(PolyPhen.Hsapiens.dbSNP131, c("rs71225486", "rs1063796"))
+     
+
+> 
+> 
+> ##' Get informatioin about the database:
+> metadata (PolyPhen.Hsapiens.dbSNP131)
+                              name
+1                          Db type
+2                      Data source
+3                           Genome
+4                Genus and Species
+5                     Resource URL
+6                      dbSNP build
+7                    Creation time
+8 RSQLite version at creation time
+9                          package
+                                                    value
+1                                              PolyPhenDb
+2                                               PolyPhen2
+3                                                    hg19
+4                                            Homo sapiens
+5 http://genetics.bwh.harvard.edu/pph2/dokuwiki/downloads
+6                                                     131
+7            2012-03-13 16:16:18 -0700 (Tue, 13 Mar 2012)
+8                                                  0.11.1
+9                                       VariantAnnotation
+> 
+> 
+> ## Get the names of the fields available in the database:
+> columns (PolyPhen.Hsapiens.dbSNP131)
+ [1] "RSID"        "TRAININGSET" "OSNPID"      "OACC"        "OPOS"       
+ [6] "OAA1"        "OAA2"        "SNPID"       "ACC"         "POS"        
+[11] "AA1"         "AA2"         "NT1"         "NT2"         "PREDICTION" 
+[16] "BASEDON"     "EFFECT"      "PPH2CLASS"   "PPH2PROB"    "PPH2FPR"    
+[21] "PPH2TPR"     "PPH2FDR"     "SITE"        "REGION"      "PHAT"       
+[26] "DSCORE"      "SCORE1"      "SCORE2"      "NOBS"        "NSTRUCT"    
+[31] "NFILT"       "PDBID"       "PDBPOS"      "PDBCH"       "IDENT"      
+[36] "LENGTH"      "NORMACC"     "SECSTR"      "MAPREG"      "DVOL"       
+[41] "DPROP"       "BFACT"       "HBONDS"      "AVENHET"     "MINDHET"    
+[46] "AVENINT"     "MINDINT"     "AVENSIT"     "MINDSIT"     "TRANSV"     
+[51] "CODPOS"      "CPG"         "MINDJNC"     "PFAMHIT"     "IDPMAX"     
+[56] "IDPSNP"      "IDQMIN"      "COMMENTS"   
+> 
+> 
+> ##' Get PolyPhen information for a subset of SNPs:
+> rsids <- c ("rs17970171", "rs2142947", "rs3026284")
+> select (PolyPhen.Hsapiens.dbSNP131, keys = rsids)
+        RSID TRAININGSET    OSNPID   OACC OPOS OAA1 OAA2     SNPID    ACC  POS
+1 rs17970171        <NA>      <NA>   <NA> <NA> <NA> <NA>      <NA>   <NA> <NA>
+2  rs2142947      humdiv rs2142947 Q5SWL7  382    F    L rs2142947 Q5SWL7  382
+3  rs2142947      humdiv rs2142947 Q5VWM6  430    F    L rs2142947 Q5VWM6  430
+4  rs2142947      humdiv rs2142947 O95521  430    F    L rs2142947 O95521  430
+5  rs2142947      humvar rs2142947   <NA> <NA> <NA> <NA> rs2142947 Q5SWL7  382
+6  rs2142947      humvar rs2142947   <NA> <NA> <NA> <NA> rs2142947 Q5VWM6  430
+7  rs2142947      humvar rs2142947   <NA> <NA> <NA> <NA> rs2142947 O95521  430
+8  rs3026284      humdiv rs3026284 P05937  202    G    D rs3026284 P05937  202
+9  rs3026284      humvar rs3026284   <NA> <NA> <NA> <NA> rs3026284 P05937  202
+   AA1  AA2  NT1  NT2        PREDICTION   BASEDON EFFECT   PPH2CLASS PPH2PROB
+1 <NA> <NA> <NA> <NA>              <NA>      <NA>   <NA>        <NA>     <NA>
+2    F    L    T    A            benign alignment   <NA>     neutral     0.07
+3    F    L    T    A            benign alignment   <NA>     neutral    0.018
+4    F    L    T    A            benign alignment   <NA>     neutral    0.007
+5    F    L <NA> <NA>            benign      <NA>   <NA>        <NA>    0.118
+6    F    L <NA> <NA>            benign      <NA>   <NA>        <NA>    0.043
+7    F    L <NA> <NA>            benign      <NA>   <NA>        <NA>    0.019
+8    G    D    G    A probably damaging alignment   <NA> deleterious    0.936
+9    G    D <NA> <NA> probably damaging      <NA>   <NA>        <NA>    0.919
+  PPH2FPR PPH2TPR PPH2FDR SITE REGION PHAT DSCORE SCORE1 SCORE2 NOBS NSTRUCT
+1    <NA>    <NA>    <NA> <NA>   <NA> <NA>   <NA>   <NA>   <NA> <NA>    <NA>
+2     0.2   0.929     0.3 <NA>   <NA> <NA>  0.524  1.464   0.94   26       0
+3   0.252   0.952   0.345 <NA>   <NA> <NA>  0.315  1.391  1.076   32       0
+4   0.301   0.966   0.383 <NA>   <NA> <NA>  0.002  1.148  1.146   25       0
+5   0.414   0.912    <NA> <NA>   <NA> <NA>   <NA>   <NA>   <NA> <NA>    <NA>
+6   0.507   0.947    <NA> <NA>   <NA> <NA>   <NA>   <NA>   <NA> <NA>    <NA>
+7   0.581   0.964    <NA> <NA>   <NA> <NA>   <NA>   <NA>   <NA> <NA>    <NA>
+8  0.0746   0.737   0.168 <NA>   <NA> <NA>  1.905  1.339 -0.566   49      25
+9   0.133   0.636    <NA> <NA>   <NA> <NA>   <NA>   <NA>   <NA> <NA>    <NA>
+  NFILT PDBID PDBPOS PDBCH IDENT LENGTH NORMACC SECSTR MAPREG DVOL DPROP BFACT
+1  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+2  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+3  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+4  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+5  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+6  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+7  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+8     2  2g9b    202     A  0.98    261    0.69      S      l   51  0.46     0
+9  <NA>  <NA>   <NA>  <NA>  <NA>   <NA>    <NA>   <NA>   <NA> <NA>  <NA>  <NA>
+  HBONDS AVENHET MINDHET AVENINT MINDINT AVENSIT MINDSIT TRANSV CODPOS  CPG
+1   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>   <NA>   <NA> <NA>
+2   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>      1      2    0
+3   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>      1      2    0
+4   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>      1      2    0
+5   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>   <NA>   <NA> <NA>
+6   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>   <NA>   <NA> <NA>
+7   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>   <NA>   <NA> <NA>
+8   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>      0      1    0
+9   <NA>    <NA>    <NA>    <NA>    <NA>    <NA>    <NA>   <NA>   <NA> <NA>
+  MINDJNC PFAMHIT IDPMAX IDPSNP IDQMIN         COMMENTS
+1    <NA>    <NA>   <NA>   <NA>   <NA>             <NA>
+2    <NA>    <NA> 33.979 33.979 63.615 chr1:13669040_GC
+3    <NA>    <NA> 32.679 32.679 61.181 chr1:13448185_GC
+4    <NA>    <NA> 33.355 33.355 62.447 chr1:12856010_CG
+5    <NA>    <NA>   <NA>   <NA>   <NA> chr1:13669040_GC
+6    <NA>    <NA>   <NA>   <NA>   <NA> chr1:13448185_GC
+7    <NA>    <NA>   <NA>   <NA>   <NA> chr1:12856010_CG
+8    <NA>       0  2.233   <NA> 69.349 chr8:91072924_CT
+9    <NA>    <NA>   <NA>   <NA>   <NA> chr8:91072924_CT
+Warning message:
+1 keys not found in PolyPhen database: rs17970171 
+> 
+> 
+> ##' Get PolyPhen information just for some columns:
+> subst <- c ("RSID", "DSCORE", "SCORE1", "SCORE2" )
+> select (PolyPhen.Hsapiens.dbSNP131, keys = rsids, columns = subst)
+        RSID DSCORE SCORE1 SCORE2
+1 rs17970171   <NA>   <NA>   <NA>
+2  rs2142947  0.524  1.464   0.94
+3  rs2142947  0.315  1.391  1.076
+4  rs2142947  0.002  1.148  1.146
+5  rs2142947   <NA>   <NA>   <NA>
+6  rs3026284  1.905  1.339 -0.566
+7  rs3026284   <NA>   <NA>   <NA>
+Warning message:
+1 keys not found in PolyPhen database: rs17970171 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+ 12.387   0.241  15.146 

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Variant annotation" />
+  <title>NGS data analysis course</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../course_commons/css_template_for_examples.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title"><a href="http://ngscourse.github.io/">NGS data analysis course</a></h1>
+<h2 class="author"><strong>Variant annotation</strong></h2>
+<h3 class="date"><em>(updated 23-02-2014)</em></h3>
+</div>
+<!--
+Clean the starting dataset
+================================================================================
+#    rm -r data/*
+#    cp data0/f* data/
+#    cd data
+-->
+
+<h1 id="introduction">Introduction</h1>
+<p>Once variants have been called in our dataset, data from many different sources may be pulled to filter the most important of those variants according to our experiment.</p>
+<p>See [Ensembl Variation data] (http://www.ensembl.org/info/genome/variation/predicted_data.html)</p>
+<p>Two of the most used filters for our variants are SIFT and PolyPhen.</p>
+<h2 id="sift">SIFT</h2>
+<p>Sorting Intolerant from Tolerant (SIFT) predicts whether an amino acid substitution affects protein function and thus is likely to have a phenotypic effect.</p>
+<p>SIFT prediction is based on the degree of conservation of amino acid residues in sequence alignments derived from closely related sequences,</p>
+<p>See <a href="http://sift.jcvi.org/">SIFT site</a> for details.</p>
+<!-- References -->
+<h2 id="polyphen">PolyPhen</h2>
+<p>Polymorphism Phenotyping (PolyPhen-2) is a software tool which predicts possible impact of amino acid substitutions on the structure and function of human proteins using straightforward physical and evolutionary comparative considerations.</p>
+<p>PolyPhen makes its predictions using UniProt features, PSIC profiles scores derived from multiple alignment and matches to PDP or PQS structural databases.</p>
+<h1 id="genomes-exercise">1000 Genomes Exercise</h1>
+<p>Go to the 1000 Genomes FTP site:</p>
+<p><a href="ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/integrated_call_sets">ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/integrated_call_sets</a></p>
+<p>The files in this directory represent the final variant call set associated with the phase1 analysis.</p>
+<p>You can use <code>tabix</code> to get the header of the VCF file and see the identifiers fore each of the samples:</p>
+<pre><code>tabix -H ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/integrated_call_sets/ALL.chr20.integrated_phase1_v3.20101123.snps_indels_svs.genotypes.vcf.gz &gt; header.txt</code></pre>
+<p>Download the first variants in chromosome 20</p>
+<pre><code>tabix -h ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase1/analysis_results/integrated_call_sets/ALL.chr20.integrated_phase1_v3.20101123.snps_indels_svs.genotypes.vcf.gz 20:1-100000 &gt; first_chr20.vcf</code></pre>
+<p>and extract their IDs suing the Linux command <code>cut</code></p>
+<pre><code>cut -f 3 first_chr20.vcf &gt; SNPids</code></pre>
+<p>See <a href="http://www.1000genomes.org/category/tabix">here</a> for more examples on the usage of <code>tabix</code> for the 1000 Genomes project.</p>
+<h2 id="annotation-example-using-sift">Annotation example using SIFT</h2>
+<p>Download the precomputed SIFT scores form the FTP of the <a href="http://sift.jcvi.org/">SIFT web page</a></p>
+<p><a href="ftp://ftp.jcvi.org/pub/data/sift/dbSNP_132">ftp://ftp.jcvi.org/pub/data/sift/dbSNP_132</a></p>
+<p>and try to include the information into the <strong>first_chr20.vcf</strong> file</p>
+<p>The scritp <strong>sift_and_polyphen_in_bioconductor.r</strong> shows how to get the same information from Bioconductor precompiled packages.</p>
+<h1 id="unknown-variants-exercise">Unknown Variants Exercise</h1>
+<p>In our VCF file <strong>f090_snp_filtered.vcf</strong> created in previous sessions there are not dbSNP identifiers. It is likely that most of the variants are novel.</p>
+<p>Use the data form <a href="http://sift.jcvi.org/">SIFT web page</a></p>
+<p><a href="ftp://ftp.jcvi.org/pub/data/sift/Human_db_37_ensembl_63/">ftp://ftp.jcvi.org/pub/data/sift/Human_db_37_ensembl_63/</a></p>
+<p>to find out which of the variants have a SIFT score and filter the variants in the file according to such information.</p>
+<p>The scritp <strong>read_sqlite.r</strong> shows how to extract the information form the SQLite file.</p>
+</body>
+</html>

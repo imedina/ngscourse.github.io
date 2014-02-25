@@ -1,0 +1,279 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##s010_read_data.r
+> ##2013-12-10 dmontaner@cipf.es
+> ##Read data form Leidinger 2013: GSE46579
+> 
+> date ()
+[1] "Tue Dec 10 17:08:34 2013"
+> Sys.info ()[c("nodename", "user")]
+   nodename        user 
+     "dlap" "dmontaner" 
+> commandArgs ()
+[1] "/usr/local/lib64/R/bin/exec/R"                                                                                 
+[2] "-f"                                                                                                            
+[3] "/home/dmontaner/documentos/masterUV/ESTUDIOS_IN_SILICO_EN_BIOMEDICINA/2013_12_10_ngs_diff_exp/s010_read_data.r"
+[4] "--restore"                                                                                                     
+[5] "--save"                                                                                                        
+[6] "--no-readline"                                                                                                 
+[7] "--no-save"                                                                                                     
+[8] "--no-restore"                                                                                                  
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.2 (2013-09-25)"
+[1] "R version 3.0.2 (2013-09-25)"
+> 
+> 
+> ###DATOS
+> conteos <- read.csv (file = "GSE46579_AD_ngs_data_summarized_raw_data.csv", as.is = TRUE)
+> conteos[1:3,]
+                               X  AD AD.1 AD.2 AD.3 AD.4 AD.5 AD.6 AD.7 AD.8
+1     hsa-mir-30a:hsa-miR-30a-3p 115  156  193  123   89   50  118  213  101
+2 hsa-mir-550a-1:hsa-miR-550a-3p 241  931  415  355  576  198  506  522  297
+3     hsa-mir-29a:hsa-miR-29a-3p  29   91   42   39   45   17   19   52   30
+  AD.9 AD.10 AD.11 AD.12 AD.13 AD.14 AD.15 AD.16 AD.17 AD.18 AD.19 AD.20 AD.21
+1  116   386   291   129   136   107   242    72   114   209   200    69    82
+2  337   830   518   422   403   124   505    91   289   901   795   162   351
+3   42   240   363   109   167    18    83    13    26   247   316    25    88
+  AD.22 AD.23 AD.24 AD.25 AD.26 AD.27 AD.28 AD.29 AD.30 AD.31 AD.32 AD.33
+1    84    58   142   185   115    53   174   233    61   119   471   223
+2   149   130   284   661   842   161  1307   432   277   174   533   571
+3    15    12    25    91    42    10   102   250    19    32   111    91
+  control control.1 control.2 control.3 control.4 control.5 control.6 control.7
+1      79       129       135       102        76       123       139        70
+2     187       155       250       177       275       197       300       141
+3      92        38       198        69        87        41        56        60
+  control.8 control.9 control.10 control.11 control.12 control.13 control.14
+1        82        23         42         11         43         35         55
+2        86        40        464        272        566        380        659
+3        36        41         61         35        168         82        117
+  control.15 control.16 control.17 control.18 control.19 control.20 control.21
+1         14         24          6        196        223        201        120
+2        215        257         84        474        498        575        489
+3         92         42          9        108        115        196        194
+  AD.34 AD.35 AD.36 AD.37 AD.38 AD.39 AD.40 AD.41 AD.42 AD.43 AD.44 AD.45 AD.46
+1   141    54   226   153    70   215   550   315    11    78   133   147    63
+2   235    82   284   124   220   565  1655  1537    31   241   245   476   137
+3    30     8    58    64    79    85   670   432     5    30    74    49    10
+  AD.47
+1     6
+2    10
+3     0
+> 
+> dim (conteos)
+[1] 503  71
+> conteos[1:3, 1:4]
+                               X  AD AD.1 AD.2
+1     hsa-mir-30a:hsa-miR-30a-3p 115  156  193
+2 hsa-mir-550a-1:hsa-miR-550a-3p 241  931  415
+3     hsa-mir-29a:hsa-miR-29a-3p  29   91   42
+> table (duplicated (conteos[,"X"])) ##OK no duplicados
+
+FALSE 
+  503 
+> rownames (conteos) <- conteos[,"X"]
+> conteos <- conteos[,-1]
+> conteos[1:3, 1:4]
+                                AD AD.1 AD.2 AD.3
+hsa-mir-30a:hsa-miR-30a-3p     115  156  193  123
+hsa-mir-550a-1:hsa-miR-550a-3p 241  931  415  355
+hsa-mir-29a:hsa-miR-29a-3p      29   91   42   39
+> 
+> summary (conteos)
+       AD                AD.1               AD.2               AD.3         
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       4   1st Qu.:       7   1st Qu.:       4   1st Qu.:       2  
+ Median :      13   Median :      28   Median :      20   Median :      17  
+ Mean   :   35407   Mean   :   34833   Mean   :   30422   Mean   :   33739  
+ 3rd Qu.:     141   3rd Qu.:     228   3rd Qu.:     142   3rd Qu.:     136  
+ Max.   :16422478   Max.   :15367807   Max.   :13624303   Max.   :14734444  
+      AD.4               AD.5               AD.6               AD.7         
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       4   1st Qu.:       3   1st Qu.:       4   1st Qu.:       4  
+ Median :      19   Median :      14   Median :      14   Median :      17  
+ Mean   :   34346   Mean   :   31921   Mean   :   42043   Mean   :   26899  
+ 3rd Qu.:     140   3rd Qu.:     120   3rd Qu.:     144   3rd Qu.:     152  
+ Max.   :15170227   Max.   :14895995   Max.   :19015330   Max.   :11608760  
+      AD.8               AD.9              AD.10              AD.11         
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       5   1st Qu.:       3   1st Qu.:      11   1st Qu.:      18  
+ Median :      20   Median :      15   Median :      38   Median :      66  
+ Mean   :   35369   Mean   :   26809   Mean   :   35551   Mean   :   35604  
+ 3rd Qu.:     181   3rd Qu.:     118   3rd Qu.:     411   3rd Qu.:     638  
+ Max.   :15967306   Max.   :12198512   Max.   :14152797   Max.   :13559808  
+     AD.12              AD.13              AD.14              AD.15         
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       7   1st Qu.:      10   1st Qu.:       1   1st Qu.:       6  
+ Median :      28   Median :      38   Median :       7   Median :      23  
+ Mean   :   31259   Mean   :   29018   Mean   :   37773   Mean   :   51735  
+ 3rd Qu.:     280   3rd Qu.:     354   3rd Qu.:      73   3rd Qu.:     236  
+ Max.   :13061051   Max.   :11987327   Max.   :17783667   Max.   :23424240  
+     AD.16              AD.17              AD.18             AD.19        
+ Min.   :       0   Min.   :       0   Min.   :      0   Min.   :      0  
+ 1st Qu.:       2   1st Qu.:       1   1st Qu.:      9   1st Qu.:     11  
+ Median :       7   Median :       8   Median :     39   Median :     42  
+ Mean   :   28912   Mean   :   28543   Mean   :  23725   Mean   :  24146  
+ 3rd Qu.:      63   3rd Qu.:      64   3rd Qu.:    322   3rd Qu.:    420  
+ Max.   :13802440   Max.   :12996988   Max.   :8977540   Max.   :8791532  
+     AD.20              AD.21             AD.22              AD.23         
+ Min.   :       0   Min.   :      0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       1   1st Qu.:      8   1st Qu.:       1   1st Qu.:       1  
+ Median :       6   Median :     34   Median :       5   Median :       5  
+ Mean   :   34243   Mean   :  20078   Mean   :   46075   Mean   :   40661  
+ 3rd Qu.:      59   3rd Qu.:    303   3rd Qu.:      58   3rd Qu.:      58  
+ Max.   :15733663   Max.   :7366228   Max.   :21897950   Max.   :19213426  
+     AD.24              AD.25              AD.26              AD.27        
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :      0  
+ 1st Qu.:       2   1st Qu.:       4   1st Qu.:       4   1st Qu.:      1  
+ Median :      12   Median :      20   Median :      19   Median :      6  
+ Mean   :   37832   Mean   :   33643   Mean   :   34186   Mean   :  18702  
+ 3rd Qu.:     112   3rd Qu.:     232   3rd Qu.:     202   3rd Qu.:     53  
+ Max.   :17464586   Max.   :14127865   Max.   :14565300   Max.   :8208503  
+     AD.28              AD.29              AD.30              AD.31         
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       5   1st Qu.:      21   1st Qu.:       3   1st Qu.:       2  
+ Median :      23   Median :      74   Median :      12   Median :      12  
+ Mean   :   37419   Mean   :   36999   Mean   :   43704   Mean   :   31199  
+ 3rd Qu.:     218   3rd Qu.:     672   3rd Qu.:     142   3rd Qu.:     118  
+ Max.   :16463194   Max.   :14676904   Max.   :20682279   Max.   :13480252  
+     AD.32             AD.33             control          control.1      
+ Min.   :      0   Min.   :       0   Min.   :      0   Min.   :      0  
+ 1st Qu.:      6   1st Qu.:      11   1st Qu.:      4   1st Qu.:      3  
+ Median :     24   Median :      37   Median :     13   Median :     13  
+ Mean   :  21335   Mean   :   38573   Mean   :  21429   Mean   :  20464  
+ 3rd Qu.:    215   3rd Qu.:     309   3rd Qu.:    160   3rd Qu.:    126  
+ Max.   :8358386   Max.   :16147282   Max.   :9232701   Max.   :9267471  
+   control.2         control.3          control.4          control.5      
+ Min.   :      0   Min.   :       0   Min.   :       0   Min.   :      0  
+ 1st Qu.:      7   1st Qu.:       4   1st Qu.:       4   1st Qu.:      3  
+ Median :     22   Median :      13   Median :      14   Median :     12  
+ Mean   :  21509   Mean   :   24109   Mean   :   25425   Mean   :  20682  
+ 3rd Qu.:    249   3rd Qu.:     154   3rd Qu.:     164   3rd Qu.:    116  
+ Max.   :8614156   Max.   :10742925   Max.   :11391945   Max.   :9282106  
+   control.6          control.7          control.8          control.9       
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       7   1st Qu.:       5   1st Qu.:       4   1st Qu.:       2  
+ Median :      28   Median :      14   Median :      11   Median :      10  
+ Mean   :   36974   Mean   :   44440   Mean   :   32390   Mean   :   30414  
+ 3rd Qu.:     236   3rd Qu.:     176   3rd Qu.:     112   3rd Qu.:      94  
+ Max.   :16877140   Max.   :21152363   Max.   :15208061   Max.   :14446895  
+   control.10         control.11        control.12         control.13      
+ Min.   :       0   Min.   :      0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       5   1st Qu.:      2   1st Qu.:       8   1st Qu.:       4  
+ Median :      21   Median :      7   Median :      34   Median :      16  
+ Mean   :   33264   Mean   :  13815   Mean   :   29363   Mean   :   33814  
+ 3rd Qu.:     168   3rd Qu.:     64   3rd Qu.:     379   3rd Qu.:     144  
+ Max.   :14544500   Max.   :5737741   Max.   :10775200   Max.   :14724738  
+   control.14         control.15        control.16         control.17      
+ Min.   :       0   Min.   :      0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       5   1st Qu.:      4   1st Qu.:       4   1st Qu.:       2  
+ Median :      20   Median :     12   Median :      15   Median :       7  
+ Mean   :   35574   Mean   :  22970   Mean   :   34015   Mean   :   25359  
+ 3rd Qu.:     182   3rd Qu.:    146   3rd Qu.:     141   3rd Qu.:      69  
+ Max.   :14606487   Max.   :9806091   Max.   :14730752   Max.   :11945518  
+   control.18         control.19         control.20         control.21      
+ Min.   :       0   Min.   :       0   Min.   :       0   Min.   :       0  
+ 1st Qu.:       7   1st Qu.:       7   1st Qu.:      11   1st Qu.:       7  
+ Median :      20   Median :      30   Median :      34   Median :      27  
+ Mean   :   42274   Mean   :   49563   Mean   :   41665   Mean   :   30017  
+ 3rd Qu.:     265   3rd Qu.:     221   3rd Qu.:     274   3rd Qu.:     228  
+ Max.   :19119518   Max.   :22472275   Max.   :18161199   Max.   :13109576  
+     AD.34             AD.35              AD.36              AD.37        
+ Min.   :      0   Min.   :       0   Min.   :       0   Min.   :      0  
+ 1st Qu.:      2   1st Qu.:       1   1st Qu.:       7   1st Qu.:      6  
+ Median :     14   Median :       5   Median :      28   Median :     22  
+ Mean   :  21478   Mean   :   23443   Mean   :   44132   Mean   :  22972  
+ 3rd Qu.:    130   3rd Qu.:      64   3rd Qu.:     284   3rd Qu.:    218  
+ Max.   :9458537   Max.   :10895755   Max.   :19732452   Max.   :9768542  
+     AD.38             AD.39             AD.40              AD.41         
+ Min.   :      0   Min.   :      0   Min.   :       0   Min.   :       0  
+ 1st Qu.:      3   1st Qu.:      3   1st Qu.:      36   1st Qu.:      20  
+ Median :     14   Median :     16   Median :     140   Median :     101  
+ Mean   :  10036   Mean   :  16929   Mean   :  110728   Mean   :   96014  
+ 3rd Qu.:    110   3rd Qu.:    136   3rd Qu.:    1154   3rd Qu.:     888  
+ Max.   :4151328   Max.   :6411133   Max.   :45398814   Max.   :39655745  
+     AD.42               AD.43             AD.44             AD.45         
+ Min.   :      0.0   Min.   :      0   Min.   :      0   Min.   :       0  
+ 1st Qu.:      0.0   1st Qu.:      4   1st Qu.:      7   1st Qu.:       4  
+ Median :      2.0   Median :     13   Median :     22   Median :      26  
+ Mean   :   5973.8   Mean   :  16866   Mean   :  19087   Mean   :   46777  
+ 3rd Qu.:     21.5   3rd Qu.:    134   3rd Qu.:    245   3rd Qu.:     212  
+ Max.   :2620333.0   Max.   :7009164   Max.   :7651804   Max.   :20148128  
+     AD.46              AD.47        
+ Min.   :       0   Min.   :      0  
+ 1st Qu.:       1   1st Qu.:      0  
+ Median :       8   Median :      0  
+ Mean   :   30258   Mean   :   2692  
+ 3rd Qu.:      94   3rd Qu.:      5  
+ Max.   :13434215   Max.   :1268282  
+> boxplot (conteos)
+> boxplot (log (1 + conteos))
+> 
+> 
+> ##SINFO: sample information
+> sinfo <- data.frame (sampleName = colnames (conteos), stringsAsFactors = FALSE)
+> sinfo[,"disease"] <- 1
+> sinfo[grep ("control", colnames (conteos)), "disease"] <- 0
+> sapply (sinfo, class)
+ sampleName     disease 
+"character"   "numeric" 
+> rownames (sinfo) <- sinfo[,"sampleName"]
+> sinfo[1:3,]
+     sampleName disease
+AD           AD       1
+AD.1       AD.1       1
+AD.2       AD.2       1
+> 
+> table (colnames (conteos) == rownames (sinfo))
+
+TRUE 
+  70 
+> 
+> 
+> table (duplicated (rownames (conteos))) ## OK no duplicates
+
+FALSE 
+  503 
+> 
+> 
+> 
+> ###SALVAMOS
+> save (list = c("conteos", "sinfo"), file = "datos_conteos.RData")
+> 
+> ###EXIT
+> warnings ()
+NULL
+> sessionInfo ()
+R version 3.0.2 (2013-09-25)
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=es_ES.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=es_ES.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=es_ES.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=es_ES.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+> q ("no")
+> proc.time()
+   user  system elapsed 
+  0.487   0.023   0.499 

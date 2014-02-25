@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NGS Analysis</title>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">NGS Analysis</h1>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#analysis-contexts-experiment-designs">Analysis Contexts / Experiment designs</a></li>
+<li><a href="#analysis-steps">Analysis Steps</a></li>
+<li><a href="#file-formats">File formats</a></li>
+<li><a href="#software">Software</a><ul>
+<li><a href="#miscellaneous">Miscellaneous</a></li>
+<li><a href="#programming">Programming</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="analysis-contexts-experiment-designs"><a href="#TOC">Analysis Contexts / Experiment designs</a></h1>
+<ul>
+<li>DNA sequencing
+<ul>
+<li>&quot;de novo&quot; whole genome</li>
+<li>Whole genome resequencing</li>
+<li>Whole exome resequencing</li>
+</ul></li>
+<li>Transcriptomics (RNA-seq)
+<ul>
+<li>Gene expression / splicing</li>
+<li>Non-coding Small RNAs / transcription factors</li>
+</ul></li>
+<li><p>Transcription factor binding sites</p></li>
+<li>Epigenomics
+<ul>
+<li>Histone methylation detection</li>
+<li>CpG island methylation</li>
+</ul></li>
+<li>Metagenomics
+<ul>
+<li>16S / 18S viruses</li>
+</ul></li>
+</ul>
+<h1 id="analysis-steps"><a href="#TOC">Analysis Steps</a></h1>
+<ul>
+<li>(File parsing: convert to <strong>fastq</strong> format form <strong>sff</strong>, <strong>fasta</strong> + <strong>qual</strong> ... )</li>
+<li><p>(Split <a href="http://www.illumina.com/technology/multiplexing_sequencing_assay.ilmn" title="Multiplex Sequencing Assay">multiplex</a> samples).</p></li>
+<li><p>Quality Control of the raw data.</p></li>
+<li>Filtering and trimming reads by quality.</li>
+<li>(Adapter trimming)</li>
+<li><p>Quality Control of the trimmed and filtered reads</p></li>
+<li>Look for a reference genome
+<ul>
+<li>Database download</li>
+<li>Assembly</li>
+</ul></li>
+<li>Alignment / Map against the reference</li>
+<li><p>Quality Control of the mapping</p></li>
+<li>GENOMICS
+<ul>
+<li>Variant calling: SNPs, InDels</li>
+<li>Copy number estimation</li>
+</ul></li>
+<li>TRANSCRIPTOMICS
+<ul>
+<li>Gene / transcript quantification</li>
+<li>New gene / isoforms discovery</li>
+<li>Splicing</li>
+</ul></li>
+<li><p>Annotation</p></li>
+<li><p>Statistical analysis</p></li>
+</ul>
+<h1 id="file-formats"><a href="#TOC">File formats</a></h1>
+<ul>
+<li><p>Fasta</p></li>
+<li><p>FastQ: fasta + quality. <a href="http://en.wikipedia.org/wiki/FASTQ_format">Wikipedia description</a>.</p></li>
+<li><p>SAM / BAM : Sequence Alignment Map format. <a href="http://samtools.sourceforge.net/SAM1.pdf">SAMtools</a>.</p></li>
+<li><p>VCF: Variant Call Format <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-40">1000 Genomes specification</a>, <a href="http://genome.ucsc.edu/FAQ/FAQformat.html#format10.1">UCSC</a>.</p></li>
+<li>Annotation formats form <a href="http://genome.ucsc.edu/FAQ/FAQformat.html">UCSC</a>
+<ul>
+<li>BED: annotation for genomic regions</li>
+<li>GFF: General Feature Format</li>
+<li>GTF: Gene Transfer Format</li>
+</ul></li>
+</ul>
+<h1 id="software"><a href="#TOC">Software</a></h1>
+<ul>
+<li><p><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc">FastQC</a>: A quality control tool for high throughput sequence data.</p></li>
+<li><p><a href="cutadapt%20http://code.google.com/p/cutadapt/">cutadapt</a>: A tool that removes adapter sequences from DNA sequencing reads</p></li>
+<li><p><a href="http://samtools.sourceforge.net/">SAM Tools</a>: SAM Tools provide various utilities for manipulating alignments in the SAM format, including sorting, merging, indexing and generating alignments in a per-position format.</p></li>
+<li><a href="http://bio-bwa.sourceforge.net/">BWA</a>: BWA is a software package for mapping low-divergent sequences against a large reference genome.</li>
+<li><p><a href="http://www.broadinstitute.org/gatk/">GATK</a>: The toolkit offers a wide variety of tools, with a primary focus on variant discovery and genotyping.</p></li>
+<li><a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie</a>: Bowtie is an ultrafast, memory-efficient short read aligner.</li>
+<li><a href="http://tophat.cbcb.umd.edu/">TopHat</a>: TopHat is a fast splice junction mapper for RNA-Seq reads.</li>
+<li><p><a href="http://cufflinks.cbcb.umd.edu">Cufflinks &amp; Cuffdiff</a> Cufflinks assembles transcripts, estimates their abundances, and tests for differential expression and regulation in RNA-Seq samples.</p></li>
+</ul>
+<h2 id="miscellaneous"><a href="#TOC">Miscellaneous</a></h2>
+<ul>
+<li><a href="http://hannonlab.cshl.edu/fastx_toolkit/">FASTX-Toolkit</a>:The FASTX-Toolkit is a collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing.</li>
+<li><a href="http://picard.sourceforge.net/">Picard</a>: Picard comprises Java-based command-line utilities that manipulate SAM files</li>
+<li>[BEDtools] (http://bedtools.readthedocs.org/en/latest/)</li>
+<li><a href="http://vcftools.sourceforge.net/">VCFtools</a></li>
+<li>[http://www.broadinstitute.org/igv/</li>
+</ul>
+<h2 id="programming"><a href="#TOC">Programming</a></h2>
+<ul>
+<li><a href="http://biopython.org/wiki/Main_Page">Biopython</a></li>
+</ul>
+</body>
+</html>

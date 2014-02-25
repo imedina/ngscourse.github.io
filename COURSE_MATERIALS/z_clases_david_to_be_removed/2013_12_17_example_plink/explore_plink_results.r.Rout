@@ -1,0 +1,197 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##explore_plink_results.r
+> ##2013-12-17 dmontaner@cipf.es
+> ##explore plink results from an association test
+> 
+> ##' See
+> ##' http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#cc
+> ##' for details on the statistical analysis performed by PLINK.
+> 
+> 
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.2 (2013-09-25)"
+[1] "R version 3.0.2 (2013-09-25)"
+> 
+> setwd ("data")
+> dir ()
+ [1] "ALL.chr20.integrated_phase1_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi"
+ [2] "f010_first_chr20.vcf"                                                        
+ [3] "f010_first_chr20.vcf.vcfidx"                                                 
+ [4] "f020_plink_format.log"                                                       
+ [5] "f020_plink_format.tfam"                                                      
+ [6] "f020_plink_format.tped"                                                      
+ [7] "f030_plink_description.log"                                                  
+ [8] "f030_plink_description.nosex"                                                
+ [9] "f040_plink_format.tfam"                                                      
+[10] "f050_res_plink.assoc"                                                        
+[11] "f050_res_plink.log"                                                          
+[12] "f050_res_plink.nosex"                                                        
+[13] "f060_res_plink.assoc"                                                        
+[14] "f060_res_plink.assoc.adjusted"                                               
+[15] "f060_res_plink.log"                                                          
+[16] "f060_res_plink.nosex"                                                        
+> 
+> datos <- read.table (file = "f060_res_plink.assoc", header = TRUE, as.is = TRUE)
+> dim (datos)
+[1] 15205    10
+> sapply (datos, class)
+        CHR         SNP          BP          A1         F_A         F_U 
+  "integer" "character"   "integer" "character"   "numeric"   "numeric" 
+         A2       CHISQ           P          OR 
+"character"   "numeric"   "numeric"   "numeric" 
+> datos[1:3,]
+  CHR         SNP    BP A1      F_A       F_U A2   CHISQ      P     OR
+1  20 rs149529999 60479  T 0.002747 0.0009158  C 1.00200 0.3169 3.0060
+2  20 rs150241001 60522 TC 0.010990 0.0119000  T 0.04046 0.8406 0.9222
+3  20 rs116145529 60571  A 0.002747 0.0018320  C 0.20050 0.6544 1.5010
+> summary (datos)
+      CHR         SNP                  BP               A1           
+ Min.   :20   Length:15205       Min.   :  60479   Length:15205      
+ 1st Qu.:20   Class :character   1st Qu.: 295139   Class :character  
+ Median :20   Mode  :character   Median : 544817   Mode  :character  
+ Mean   :20                      Mean   : 540032                     
+ 3rd Qu.:20                      3rd Qu.: 783019                     
+ Max.   :20                      Max.   :1000000                     
+                                                                     
+      F_A                 F_U                 A2                CHISQ        
+ Min.   :0.0000000   Min.   :0.0000000   Length:15205       Min.   : 0.0000  
+ 1st Qu.:0.0009158   1st Qu.:0.0009158   Class :character   1st Qu.: 0.1679  
+ Median :0.0045790   Median :0.0045790   Mode  :character   Median : 0.7921  
+ Mean   :0.0594659   Mean   :0.0592159                      Mean   : 0.9695  
+ 3rd Qu.:0.0421200   3rd Qu.:0.0412100                      3rd Qu.: 1.0070  
+ Max.   :0.5183000   Max.   :0.5147000                      Max.   :10.3100  
+                                                            NA's   :60       
+       P                 OR         
+ Min.   :0.00132   Min.   : 0.0000  
+ 1st Qu.:0.31560   1st Qu.: 0.6661  
+ Median :0.37350   Median : 0.9953  
+ Mean   :0.47247   Mean   : 0.9963  
+ 3rd Qu.:0.68200   3rd Qu.: 1.1420  
+ Max.   :1.00000   Max.   :12.1200  
+ NA's   :60        NA's   :2203     
+> 
+> 
+> ##' Remove SNPs for which the test did not work;
+> ##' those for which the p-value or the OR did not work...
+> touse <- !is.na (datos[,"OR"])
+> table (touse)
+touse
+FALSE  TRUE 
+ 2203 13002 
+> 
+> datos <- datos[touse,]
+> dim (datos)
+[1] 13002    10
+> summary (datos)
+      CHR         SNP                  BP               A1           
+ Min.   :20   Length:13002       Min.   :  60479   Length:13002      
+ 1st Qu.:20   Class :character   1st Qu.: 295157   Class :character  
+ Median :20   Mode  :character   Median : 547938   Mode  :character  
+ Mean   :20                      Mean   : 541507                     
+ 3rd Qu.:20                      3rd Qu.: 783974                     
+ Max.   :20                      Max.   :1000000                     
+      F_A                F_U                 A2                CHISQ        
+ Min.   :0.000000   Min.   :0.0009158   Length:13002       Min.   : 0.0000  
+ 1st Qu.:0.001832   1st Qu.:0.0018320   Class :character   1st Qu.: 0.1161  
+ Median :0.008242   Median :0.0082420   Mode  :character   Median : 0.5018  
+ Mean   :0.069324   Mean   :0.0692491                      Mean   : 0.8918  
+ 3rd Qu.:0.067540   3rd Qu.:0.0641000                      3rd Qu.: 1.0040  
+ Max.   :0.518300   Max.   :0.5147000                      Max.   :10.3100  
+       P                  OR         
+ Min.   :0.001325   Min.   : 0.0000  
+ 1st Qu.:0.316300   1st Qu.: 0.6661  
+ Median :0.478700   Median : 0.9953  
+ Mean   :0.506800   Mean   : 0.9963  
+ 3rd Qu.:0.733325   3rd Qu.: 1.1420  
+ Max.   :1.000000   Max.   :12.1200  
+> 
+> 
+> ##' What is the Odds Ratio (OR column)
+> plot (datos[,"F_A"] / datos[,"F_U"], datos[,"OR"])
+> abline (0, 1, col = "red")
+> 
+> 
+> ##' How is the p-value distribution
+> hist (datos[,"P"])
+> abline (v = 0.05, col = "red")
+> 
+> ##' Does it seem UNIFORM?
+> my.random.p <- runif (nrow (datos))
+> hist (my.random.p)
+> abline (v = 0.05, col = "red")
+> 
+> 
+> ##' What is the p-value relationship with the CHISQ statistic
+> plot (datos[,"CHISQ"], datos[,"P"])
+> 
+> 
+> ##' What is the p-value relationship with the OR
+> plot (datos[,"OR"], datos[,"P"])
+> abline (v = 1, col = "blue")
+> 
+> 
+> ##' In the previous plot you can see how the Odds Ratio distribution
+> ##' is [skewed to the right](http://en.wikipedia.org/wiki/Skewness).
+> ##' Usually log Odds Ratio is preferred.
+> plot (log (datos[,"OR"]), datos[,"P"])
+> abline (v = 0, col = "blue")
+> 
+> ##' And the relationship between the OR and the test statistic
+> plot (log (datos[,"OR"]), datos[,"CHISQ"])
+> abline (v = 0, col = "blue")
+> 
+> 
+> ##' How many SNPs are significant?
+> ##' According to the standard 0.05 threshold:
+> table (datos[,"P"] < 0.05)
+
+FALSE  TRUE 
+12597   405 
+> 
+> ##' In percentage
+> 100 * table (datos[,"P"] < 0.05) / nrow (datos)
+
+    FALSE      TRUE 
+96.885095  3.114905 
+> 
+> ##' Compare with randomly generated p-values
+> 100 * table (my.random.p < 0.05) / nrow (datos)
+
+   FALSE     TRUE 
+94.73158  5.26842 
+> 
+> 
+> ##' Perform a FDR p.value correction
+> padj <- p.adjust (datos[,"P"], method = "fdr")
+> 
+> ##' and explore the corrected p-values
+> table (padj < 0.05)
+
+FALSE 
+13002 
+> 
+> par (mfrow = c(1,2))
+> boxplot (cbind (p = datos[,"P"], padj))
+> plot (datos[,"P"], padj, xlim = c(0,1), ylim = c(0,1))
+> 
+> proc.time()
+   user  system elapsed 
+  0.592   0.039   0.615 

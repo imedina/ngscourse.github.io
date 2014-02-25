@@ -1,0 +1,543 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NGS: quality control &amp; adapter trimming</title>
+  <style>
+  html {
+      color:#000;
+      background:#FFF;
+  }
+  
+  body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
+      margin:0;
+      padding:0;
+  }
+  
+  table {
+      border-spacing:0;
+      font-size:inherit;
+      font:100%;
+      max-width:100%;
+      background-color:transparent;
+      border:1px solid #DDD;
+      border-left:0;
+      border-collapse:collapsed;
+      -webkit-border-radius:4px;
+      -moz-border-radius:4px;
+      border-radius:4px;
+  }
+  
+  fieldset,img {
+      border:0;
+  }
+  
+  address,caption,cite,code,dfn,em,strong,th,var {
+      font-style:normal;
+      font-weight:400;
+  }
+  
+  ol,ul {
+      list-style:none;
+  }
+  
+  caption,th {
+      text-align:left;
+  }
+  
+  h1,h2,h3,h4,h5,h6 {
+      font-size:100%;
+      font-weight:400;
+      color:#20639b;
+      margin:1em 0;
+  }
+  
+  q:before,q:after {
+      content:'';
+  }
+  
+  abbr,acronym {
+      border:0;
+      font-variant:normal;
+      border-bottom:1px dotted #000;
+      cursor:help;
+  }
+  
+  sup {
+      vertical-align:text-top;
+  }
+  
+  sub {
+      vertical-align:text-bottom;
+  }
+  
+  input,textarea,select {
+      font-family:inherit;
+      font-weight:inherit;
+      font-size:100%;
+  }
+  
+  legend {
+      color:#000;
+  }
+  
+  h1,h2,h3,h4,h5,h6,strong {
+      font-weight:700;
+  }
+  
+  em {
+      font-style:italic;
+  }
+  
+  blockquote,ul,ol,dl {
+      margin:1em;
+  }
+  
+  ol,ul,dl {
+      margin-left:2em;
+  }
+  
+  ol {
+      list-style:decimal outside;
+  }
+  
+  ul {
+      list-style:disc outside;
+  }
+  
+  dl dd {
+      margin-left:1em;
+  }
+  
+  th,td {
+      line-height:1.125em;
+      text-align:left;
+      vertical-align:top;
+      border-top:1px solid #DDD;
+      border-left:1px solid #DDD;
+      padding:.5em;
+  }
+  
+  th {
+      font-weight:700;
+      text-align:center;
+      color:#20639b;
+  }
+  
+  table thead:first-child tr:first-child th,table tbody:first-child tr:first-child th,table tbody:first-child tr:first-child td {
+      border-top:0;
+  }
+  
+  table thead:first-child tr:first-child th:first-child,table tbody:first-child tr:first-child td:first-child {
+      -webkit-border-radius:4px 0 0 0;
+      -moz-border-radius:4px 0 0;
+      border-radius:4px 0 0 0;
+  }
+  
+  table thead:first-child tr:first-child th:last-child,table tbody:first-child tr:first-child td:last-child {
+      -webkit-border-radius:0 4px 0 0;
+      -moz-border-radius:0 4px 0 0;
+      border-radius:0 4px 0 0;
+  }
+  
+  table thead:last-child tr:last-child th:first-child,table tbody:last-child tr:last-child td:first-child {
+      -webkit-border-radius:0 0 0 4px;
+      -moz-border-radius:0 0 0 4px;
+      border-radius:0 0 0 4px;
+  }
+  
+  table thead:last-child tr:last-child th:last-child,table tbody:last-child tr:last-child td:last-child {
+      -webkit-border-radius:0 0 4px 0;
+      -moz-border-radius:0 0 4px;
+      border-radius:0 0 4px 0;
+  }
+  
+  table tbody tr:nth-child(odd) td,table tbody tr:nth-child(odd) th {
+      background-color:#f9f9f9;
+  }
+  
+  caption {
+      margin-bottom:.5em;
+      text-align:center;
+  }
+  
+  p,fieldset,table,pre {
+      margin-top:.5em;
+      margin-bottom:.5em;
+  }
+  
+  body {
+      font:16px/1.4 "Helvetica Neue", Helvetica, "Open Sans", Arial, sans-serif;
+      color:#333;
+      /*max-width:960px;*/
+      /*margin:0 auto;*/
+      margin:1em;
+  }
+  
+  pre,code,kbd,samp,tt {
+      font-family:monospace;
+      font-size:90%;
+      line-height:100%;
+  }
+  
+  h1 {
+      font-size:200%;
+      border-bottom:2px dotted #ddd;
+  }
+  
+  a,a:visited,code {
+      /*color:#f06024;*/
+      color:#20639b;
+  }
+  
+  a:link {text-decoration:none;}    /* unvisited link */
+  a:visited {text-decoration:none;} /* visited link */
+  a:hover {text-decoration:underline;}   /* mouse over link */
+  a:active {text-decoration:underline;}  /* selected link */
+  
+  
+  h2 {
+      font-size:160%;
+  }
+  
+  h3 {
+      font-size:120%;
+  }
+  
+  h4 {
+      font-size:110%;
+  }
+  
+  h5 {
+      font-size:95%;
+  }
+  
+  h6 {
+      font-size:90%;
+      color:#999;
+  }
+  
+  dl {
+      margin:0 0 1.125em;
+  }
+  
+  dt {
+      font-weight:700;
+      line-height:1.125em;
+  }
+  
+  dd {
+      margin-left:1em;
+      line-height:1.125em;
+  }
+  
+  pre,blockquote {
+      border:1px solid #ddd;
+      background-color:#f1f1f1;
+      -webkit-border-radius:6px;
+      -moz-border-radius:6px;
+      border-radius:6px;
+      padding:10px;
+  }
+  
+  blockquote {
+      margin:1em 2.5em;
+  }
+  
+  code {
+      color:#20639b;
+      background:#f1f1f1;
+  }
+  
+  img {
+      max-width:100%;
+  }
+  
+  ol[type=1] {
+      list-style-type:decimal;
+  }
+  
+  ol[type=a] {
+      list-style-type:lower-alpha;
+  }
+  
+  ol[type=A] {
+      list-style-type:upper-alpha;
+  }
+  
+  ol[type=I] {
+      list-style-type:upper-roman;
+  }
+  
+  ol[type=i] {
+      list-style-type:lower-roman;
+  }
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">NGS: quality control &amp; adapter trimming</h1>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#preliminaries">Preliminaries</a><ul>
+<li><a href="#software-used-in-this-practical">Software used in this practical</a></li>
+<li><a href="#file-formats-fastq">File formats: FastQ</a></li>
+</ul></li>
+<li><a href="#exercise">Exercise</a><ul>
+<li><a href="#raw-data-preprocessing">Raw Data Preprocessing</a></li>
+<li><a href="#make-a-non-redundant-dataset">Make a non-redundant dataset</a></li>
+<li><a href="#format-mirbase">Format miRBase</a></li>
+<li><a href="#map-against-mirbase-using-bowtie2">Map against miRBase using bowtie2</a></li>
+</ul></li>
+<li><a href="#homework">Homework</a></li>
+</ul>
+</div>
+<h1 id="preliminaries"><a href="#TOC">Preliminaries</a></h1>
+<h2 id="software-used-in-this-practical"><a href="#TOC">Software used in this practical</a></h2>
+<ul>
+<li><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc">FastQC</a>: A quality control tool for high throughput sequence data.</li>
+<li><a href="http://code.google.com/p/cutadapt">cutadapt</a>: A tool that removes adapter sequences from DNA sequencing reads.</li>
+<li><a href="http://hannonlab.cshl.edu/fastx_toolkit">FASTX-Toolkit</a>: A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing.</li>
+<li><a href="http://bowtie-bio.sourceforge.net/bowtie2/index.shtml">Bowtie 2</a>: Tool for aligning sequencing reads to long reference sequences.</li>
+</ul>
+<h2 id="file-formats-fastq"><a href="#TOC">File formats: FastQ</a></h2>
+<p>See :</p>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/FASTQ_format">Wikipedia</a>.</li>
+<li><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847217">NAR 2010</a>.</li>
+</ul>
+<h1 id="exercise"><a href="#TOC">Exercise</a></h1>
+<p>The file <strong>f000_raw_mirna.fastq</strong> in the data folder contains reads form a microRNA sequencing experiment.</p>
+<!--
+    cd data
+-->
+
+<p>Use <code>wc</code> to count how many reads there are in the file (remember you have to divide by 4)</p>
+<pre><code>wc -l f000_raw_mirna.fastq</code></pre>
+<h2 id="raw-data-preprocessing"><a href="#TOC">Raw Data Preprocessing</a></h2>
+<p>Use fastqc to explore the quality of the data:</p>
+<pre><code>fastqc f000_raw_mirna.fastq</code></pre>
+<p>Find the <em>Overrepresented sequences</em> in <a href="http://www.mirbase.org/search.shtml">mirbase</a>.</p>
+<p>There are 2 known adapters used in this experiment:</p>
+<!--
+    <<"COMMENT"
+-->
+
+<pre><code>CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA
+CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC</code></pre>
+<!--
+    COMMENT
+-->
+
+
+
+<p>Use R-Bioconductor to compute their reverse, complementary and reverse complementary.</p>
+<p>Hint: <!--
+    <<"COMMENT"
+--></p>
+<pre><code>library (Biostrings)
+myseq &lt;- DNAString (&quot;CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC&quot;)
+reverse (myseq)
+complement (myseq)
+reverseComplement (myseq)</code></pre>
+<!--
+    cat (c (as.character (myseq),
+            as.character (reverse (myseq)),
+            as.character (complement (myseq)),
+            as.character (reverseComplement (myseq))),
+         sep = "\n")
+-->
+
+<!--
+    COMMENT
+-->
+
+
+
+<p>Use grep form Linux shell to find out which of the versions of the adapter is in your data.</p>
+<!--
+
+Adapter 1
+----------
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA f000_raw_mirna.fastq | wc -l  ## at the beginning is there
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCTAAACCCTTAGAATATTCAAGACATACTCTGGTGAGATTTTT f000_raw_mirna.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG f000_raw_mirna.fastq | wc -l  ## is there at the end ... but not so much
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAAGGGTTTAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC f000_raw_mirna.fastq | wc -l 
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGA f000_raw_mirna.fastq | wc -l 
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCT f000_raw_mirna.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATT f000_raw_mirna.fastq | wc -l 
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAA f000_raw_mirna.fastq | wc -l 
+
+    grep GAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA f000_raw_mirna.fastq | wc -l 
+    grep CTTAGAATATTCAAGACATACTCTGGTGAGATTTTT f000_raw_mirna.fastq | wc -l 
+    grep ATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG f000_raw_mirna.fastq | wc -l 
+    grep TAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC f000_raw_mirna.fastq | wc -l 
+
+
+Adapter 2
+----------
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC f000_raw_mirna.fastq | wc -l   ## is there at the end ... but not so much
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATATTTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG f000_raw_mirna.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG f000_raw_mirna.fastq | wc -l   ## is there at the beginning
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAAGAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC f000_raw_mirna.fastq | wc -l 
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATA f000_raw_mirna.fastq | wc -l 
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATAT f000_raw_mirna.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTT f000_raw_mirna.fastq | wc -l 
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAA f000_raw_mirna.fastq | wc -l 
+
+    grep AAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC f000_raw_mirna.fastq | wc -l 
+    grep TTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG f000_raw_mirna.fastq | wc -l 
+    grep CTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG f000_raw_mirna.fastq | wc -l 
+    grep GAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC f000_raw_mirna.fastq | wc -l 
+
+-->
+
+<p>Use cutadapt to make an adapter trimming of the reads. Check the options:</p>
+<ul>
+<li><strong>-a</strong> for adapter to the 3' end.</li>
+<li><strong>-g</strong> for adapter to the 5' end.</li>
+</ul>
+<p>command:</p>
+<pre><code>cutadapt -g CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA -o f010_mirna_trim1.fastq f000_raw_mirna.fastq
+
+cutadapt -a TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG -o f010_mirna_trim2.fastq f010_mirna_trim1.fastq
+
+cutadapt -g GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG         -o f010_mirna_trim3.fastq f010_mirna_trim2.fastq
+
+cutadapt -a CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC         -o f010_mirna_trim4.fastq f010_mirna_trim3.fastq</code></pre>
+<!--
+
+Adapter 1
+----------
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA f010_mirna_trim4.fastq | wc -l  ## at the beginning is there
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCTAAACCCTTAGAATATTCAAGACATACTCTGGTGAGATTTTT f010_mirna_trim4.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATTCCCAAATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG f010_mirna_trim4.fastq | wc -l  ## is there at the end ... but not so much
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAAGGGTTTAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC f010_mirna_trim4.fastq | wc -l 
+
+    grep CTGGGAAATCACCATAAACGTGAAATGTCTTTGGA f010_mirna_trim4.fastq | wc -l 
+    grep GACCCTTTAGTGGTATTTGCACTTTACAGAAACCT f010_mirna_trim4.fastq | wc -l 
+    grep TTTTTAGAGTGGTCTCATACAGAACTTATAAGATT f010_mirna_trim4.fastq | wc -l 
+    grep AAAAATCTCACCAGAGTATGTCTTGAATATTCTAA f010_mirna_trim4.fastq | wc -l 
+
+    grep GAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA f010_mirna_trim4.fastq | wc -l 
+    grep CTTAGAATATTCAAGACATACTCTGGTGAGATTTTT f010_mirna_trim4.fastq | wc -l 
+    grep ATCCAAAGACATTTCACGTTTATGGTGATTTCCCAG f010_mirna_trim4.fastq | wc -l 
+    grep TAGGTTTCTGTAAAGTGCAAATACCACTAAAGGGTC f010_mirna_trim4.fastq | wc -l 
+
+
+Adapter 2
+----------
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC f010_mirna_trim4.fastq | wc -l   ## is there at the end ... but not so much
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATATTTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG f010_mirna_trim4.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTTCTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG f010_mirna_trim4.fastq | wc -l   ## is there at the beginning
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAAGAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC f010_mirna_trim4.fastq | wc -l 
+
+    grep CTTTTTTTCGTCCTTTCCACAAGATATATA f010_mirna_trim4.fastq | wc -l 
+    grep GAAAAAAAGCAGGAAAGGTGTTCTATATAT f010_mirna_trim4.fastq | wc -l 
+    grep GCTTACCGTAACTTGAAAGTATTTCGATTT f010_mirna_trim4.fastq | wc -l 
+    grep CGAATGGCATTGAACTTTCATAAAGCTAAA f010_mirna_trim4.fastq | wc -l 
+
+    grep AAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC f010_mirna_trim4.fastq | wc -l 
+    grep TTCGGTTCTTTAGCTTTATGAAAGTTCAATGCCATTCG f010_mirna_trim4.fastq | wc -l 
+    grep CTTGGCTTTATATATCTTGTGGAAAGGACGAAAAAAAG f010_mirna_trim4.fastq | wc -l 
+    grep GAACCGAAATATATAGAACACCTTTCCTGCTTTTTTTC f010_mirna_trim4.fastq | wc -l 
+
+-->
+
+<p>Check the quality again using fastqc:</p>
+<pre><code>fastqc f010_mirna_trim4.fastq</code></pre>
+<p>Use cutadapt to filter reads by quality and length. Check the options:</p>
+<ul>
+<li><strong>-q</strong> quality cutoff.</li>
+<li><strong>-m</strong> minimum length.</li>
+<li><p><strong>-M</strong> maximum length.</p>
+<p>cutadapt -m 17 -M 30 -q 10 -o f020_mirna_cut.fastq f010_mirna_trim4.fastq</p></li>
+</ul>
+<p>And check quality again using fastqc</p>
+<pre><code>fastqc f020_mirna_cut.fastq</code></pre>
+<p>Find again the <em>Overrepresented sequences</em> in <a href="http://www.mirbase.org/search.shtml">mirbase</a>.</p>
+<p>Count how many reads are left for the analysis (divide by 4)</p>
+<pre><code>wc -l f000_raw_mirna.fastq
+wc -l f020_mirna_cut.fastq</code></pre>
+<h2 id="make-a-non-redundant-dataset"><a href="#TOC">Make a non-redundant dataset</a></h2>
+<p>Use fastx to to create a non-redundant fasta file with the reads by collapsing identical sequences.</p>
+<pre><code>fastx_collapser -Q33 -v -i f020_mirna_cut.fastq -o f030_mirna_collapsed.fasta</code></pre>
+<p>The parameter <code>-Q33</code> indicates that we are using Illumina encoded quality scores, not Sanger encoding.</p>
+<p>See the first lines of the new file <code>030_mirna_collapsed.fasta</code></p>
+<ul>
+<li>¿Can you find the number of times each read is replicated?</li>
+<li>Find the most common sequence. Find it in the results form the FastQC analysis.</li>
+</ul>
+<h2 id="format-mirbase"><a href="#TOC">Format miRBase</a></h2>
+<p>Download the <strong>mature</strong> microRNA sequences form the <a href="http://www.mirbase.org/ftp.shtml">miRBase web page</a>.</p>
+<p>Filter the human microRNAs. Generally you will write an script for this kind of task: Python, Perl, R-Bioconductor... but in this very easy case you can directly use Linux shell command <code>grep</code>.</p>
+<pre><code>grep -A 1 &quot;Homo sapiens&quot; mature.fa &gt; mature_human0.fa
+grep -v  &quot;^--&quot; mature_human0.fa &gt; mature_human1.fa </code></pre>
+<p>where <code>-A</code> indicates how many lines should be returned after the line matching the pattern. <code>-A</code> introduces some separator lines (<code>--</code>) that are removed in the <code>grep -v</code> line.</p>
+<p>Observe that the database we downloaded form miRBase is a database of <strong>RNA</strong> we will need to convert it into a <strong>DNA</strong> fasta file. You can use fastx for this purpose.</p>
+<pre><code>fasta_nucleotide_changer -i mature_human1.fa -o mature_human.fa -d</code></pre>
+<h2 id="map-against-mirbase-using-bowtie2"><a href="#TOC">Map against miRBase using bowtie2</a></h2>
+<p>Fist we need to <strong>build an index</strong> for bowtie:</p>
+<pre><code>bowtie2-build mature_human.fa mature_human</code></pre>
+<p>And now we can run the <strong>alignment step</strong>:</p>
+<pre><code>bowtie2-align -x mature_human -f f030_mirna_collapsed.fasta -S f040_mirna_mapped.sam</code></pre>
+<!-- bowtie2 AND bowtie2-align ARE THE SAME -->
+
+
+<p>Explore the <strong>SAM</strong> file that has been created. <a href="http://samtools.sourceforge.net/SAM1.pdf">Here</a> you can find the SAM format specifications. More information is available in <a href="http://samtools.sourceforge.net">SAMtools home page</a>.</p>
+<h1 id="homework"><a href="#TOC">Homework</a></h1>
+<ul>
+<li><p>Increase the parameter <code>-N</code> in bowtie and see whether more reads align to the reference of miRNAs.<br /><!--
+```
+    bowtie2-align -x mature_human -N 1 -f f030_mirna_collapsed.fasta -S f040_mirna_mapped_N1.sam
+```
+--></p></li>
+<li><p>Align the uncollapsed fastq file against the human microRNAs.<br /><!--
+```
+    bowtie2 -x mature_human -U f020_mirna_cut.fastq -S f045_mirna_cut_mapped.sam
+```
+--></p></li>
+<li><p>Align the collapsed and uncollapsed files against all miRNAs in miRBase.<br /><!--
+```
+    ##prepare the reference
+    fasta_nucleotide_changer -i mature.fa -o matureDNA.fa -d
+    bowtie2-build matureDNA.fa matureDNA
+
+    ##align collapsed
+    bowtie2-align -x matureDNA -f f030_mirna_collapsed.fasta -S g040_mirna_mapped.sam
+
+    ##align uncollapsed
+    bowtie2-align -x matureDNA -U f020_mirna_cut.fastq -S g045_mirna_cut_mapped.sam
+```
+--></p></li>
+</ul>
+<!-- ---------------------------------------------------------------------------
+References
+================================================================================
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

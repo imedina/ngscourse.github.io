@@ -1,0 +1,102 @@
+
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ##explore_plink_pvalues.r
+> ##2013-12-17 dmontaner@cipf.es
+> ##explore p-value adjustment form plink in the association test results
+> 
+> ##' See
+> ##' http://pngu.mgh.harvard.edu/~purcell/plink/anal.shtml#cc
+> ##' for details on the statistical analysis performed by PLINK.
+> 
+> rm (list = ls ())
+> R.version.string ##"R version 3.0.2 (2013-09-25)"
+[1] "R version 3.0.2 (2013-09-25)"
+> 
+> setwd ("data")
+> dir ()
+ [1] "ALL.chr20.integrated_phase1_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi"
+ [2] "f010_first_chr20.vcf"                                                        
+ [3] "f010_first_chr20.vcf.vcfidx"                                                 
+ [4] "f020_plink_format.log"                                                       
+ [5] "f020_plink_format.tfam"                                                      
+ [6] "f020_plink_format.tped"                                                      
+ [7] "f030_plink_description.log"                                                  
+ [8] "f030_plink_description.nosex"                                                
+ [9] "f040_plink_format.tfam"                                                      
+[10] "f050_res_plink.assoc"                                                        
+[11] "f050_res_plink.log"                                                          
+[12] "f050_res_plink.nosex"                                                        
+[13] "f060_res_plink.assoc"                                                        
+[14] "f060_res_plink.assoc.adjusted"                                               
+[15] "f060_res_plink.log"                                                          
+[16] "f060_res_plink.nosex"                                                        
+[17] "Rplots.pdf"                                                                  
+> 
+> datos <- read.table (file = "f060_res_plink.assoc.adjusted", header = TRUE, as.is = TRUE)
+> dim (datos)
+[1] 15145    10
+> sapply (datos, class)
+        CHR         SNP       UNADJ          GC        BONF        HOLM 
+  "integer" "character"   "numeric"   "numeric"   "integer"   "integer" 
+   SIDAK_SS    SIDAK_SD      FDR_BH      FDR_BY 
+  "integer"   "integer"   "numeric"   "integer" 
+> datos[1:3,]
+  CHR        SNP    UNADJ      GC BONF HOLM SIDAK_SS SIDAK_SD FDR_BH FDR_BY
+1  20 rs56138654 0.001325 0.01486    1    1        1        1 0.6754      1
+2  20 rs55979979 0.001606 0.01668    1    1        1        1 0.6754      1
+3  20  rs1884636 0.001649 0.01695    1    1        1        1 0.6754      1
+> summary (datos)  ##NOTICE that there are no missing data.
+      CHR         SNP                UNADJ                GC         
+ Min.   :20   Length:15145       Min.   :0.001325   Min.   :0.01486  
+ 1st Qu.:20   Class :character   1st Qu.:0.315600   1st Qu.:0.44640  
+ Median :20   Mode  :character   Median :0.373500   Median :0.49950  
+ Mean   :20                      Mean   :0.472472   Mean   :0.56624  
+ 3rd Qu.:20                      3rd Qu.:0.682000   3rd Qu.:0.75590  
+ Max.   :20                      Max.   :1.000000   Max.   :1.00000  
+      BONF        HOLM      SIDAK_SS    SIDAK_SD     FDR_BH           FDR_BY 
+ Min.   :1   Min.   :1   Min.   :1   Min.   :1   Min.   :0.6754   Min.   :1  
+ 1st Qu.:1   1st Qu.:1   1st Qu.:1   1st Qu.:1   1st Qu.:0.6754   1st Qu.:1  
+ Median :1   Median :1   Median :1   Median :1   Median :0.7469   Median :1  
+ Mean   :1   Mean   :1   Mean   :1   Mean   :1   Mean   :0.7937   Mean   :1  
+ 3rd Qu.:1   3rd Qu.:1   3rd Qu.:1   3rd Qu.:1   3rd Qu.:0.9091   3rd Qu.:1  
+ Max.   :1   Max.   :1   Max.   :1   Max.   :1   Max.   :1.0000   Max.   :1  
+> 
+> 
+> colnames (datos)
+ [1] "CHR"      "SNP"      "UNADJ"    "GC"       "BONF"     "HOLM"    
+ [7] "SIDAK_SS" "SIDAK_SD" "FDR_BH"   "FDR_BY"  
+> 
+> ##' Some plots
+> par (mfrow = c(2,3))
+> for (co in c ("BONF", "HOLM", "SIDAK_SS", "SIDAK_SD", "FDR_BH", "FDR_BY")) {
++     print (co)
++     plot (datos[,"UNADJ"], datos[,co], xlim = c(0,1), ylim = c(0,1))
++     title (main = co)
++ }
+[1] "BONF"
+[1] "HOLM"
+[1] "SIDAK_SS"
+[1] "SIDAK_SD"
+[1] "FDR_BH"
+[1] "FDR_BY"
+> 
+> proc.time()
+   user  system elapsed 
+  0.449   0.038   0.468 
