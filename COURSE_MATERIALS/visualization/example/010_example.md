@@ -1,11 +1,11 @@
 % [NGS data analysis course](http://ngscourse.github.io/)
-% __Title of the practical__
-% _(updated 23-02-2014)_
+% __Visualization of mapped reads__
+% _(updated 26-02-2014)_
 
 <!-- COMMON LINKS HERE -->
 
-[fastqc]: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ "notes on hover"
-[bwa]: http://bio-bwa.sourceforge.net/ "notes BWA"
+[IGV]: http://www.broadinstitute.org/igv/home "IGV"
+[Samtools]: http://samtools.sourceforge.net/ "samtools"
 
 
 Preliminaries
@@ -15,22 +15,15 @@ Preliminaries
 Software used in this practical:
 --------------------------------
 
-- [FastQC] : (SPACE BEFORE THE COLON) Explain ...
-- [BWA software][BWA] : Explain with a sentence.
+- [IGV] : The Integrative Genomics Viewer is a program for reading several types of indexed database information, including mapped reads and variant calls, and displaying them on a reference genome. It is invaluable as a tool for viewing and interpreting the "raw data" of many NGS data analysis pipelines.
+- [samtools] : SAM Tools provide various utilities for manipulating alignments in the SAM format, including sorting, merging, indexing and generating alignments in a per-position format.
 
 
 File formats explored:
 ----------------------
 
-FastQ:
-
-- [Wikipedia](http://en.wikipedia.org/wiki/FASTQ_format)
-- more
-
-
-SAM/BAM
-
-- links
+- [SAM](http://samtools.sourceforge.net/SAMv1.pdf)
+- [BAM](http://www.broadinstitute.org/igv/bam)
 
 
 Data used in this practical
@@ -55,44 +48,58 @@ Find all data files for the course here: [COURSE_EXAMPLE_DATA](../../../COURSE_E
 
 
 
-Exercise
+Exercise 1: Visualizing sequencing data
 ================================================================================
 
-The file **f000_raw_mirna.fastq** in the data folder contains reads form a microRNA sequencing experiment.
+In the following **folder** you wil find mapped sequencing data from a CEU trio (father, mother and child) from the 1000 Genomes Project:
 
-Use `wc` to count how many reads there are in the file (remember you have to divide by 4)
+    cd ~/ngscourse.github.io/COURSE_EXAMPLE_DATA/visualization/example_1
+    
+    ll
 
-    wc -l f000_raw_mirna.fastq
+These datasets contain reads only for the [GABBR1](http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000204681;r=6:29523406-29601753) gene.
 
-
-Raw Data Preprocessing
+Creating indexed files
 --------------------------------------------------------------------------------
 
-Use fastqc to explore the quality of the data:
+Use ``samtools`` to index the bam files:
 
-    fastqc f000_raw_mirna.fastq
-
-
-Find the _Overrepresented sequences_ in [mirbase][mirbase-search].
-
-
-There are 2 known adapters used in this experiment: 
-
-    CTGGGAAATCACCATAAACGTGAAATGTCTTTGGATTTGGGAATCTTATAAGTTCTGTATGAGACCACTCTAAAAA
-    CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC
-
-Use R-Bioconductor to compute their reverse, complementary and reverse complementary.
-
-    library (Biostrings)
-    myseq <- DNAString ("CTTTTTTTCGTCCTTTCCACAAGATATATAAAGCCAAGAAATCGAAATACTTTCAAGTTACGGTAAGC")
-    reverse (myseq)
-    complement (myseq)
-    reverseComplement (myseq)
+    samtools index NA12878_child.bam
+    samtools index NA12891_dad.bam
+    samtools index NA12892_mom.bam
 
 
+Run IGV
+--------------------------------------------------------------------------------
 
-Further work
+    igv
+
+Downolad a referece genome
+--------------------------------------------------------------------------------
+
+By default, IGV loads Human hg18 assembly. However, we must work with the **same assembly used to mapped our reads**, in this case Human hg19.  
+Genome assemblies for several species can be dowloaded using IGV:
+
+- Go to ``Genomes`` --> ``Load Genome From Server...``  
+Select **Human hg19**
+
+    
+Loading and browsing files
+--------------------------------------------------------------------------------
+
+- Go to ``File`` --> ``Load from file...``  
+Select NA12878_child.bam, NA12891_dad.bam and NA12892_mom.bam
+
+**Steps:**
+
+1. Enter the name of our gene (_**GABBR1**_) in the search box and hit ``Go``.
+2. Zoom in until you find some SNPs - they might be in exons or introns.
+3. Identify at least one example of a short insertion variant and deletion arround exon 4.
+4. Load and look at the SNP track: ``File`` --> ``Load from server`` --> ``Annotations`` --> ``Variants and Repeats`` --> ``dbSNP``
+
+
+
+Exercise 2: Visualizing RNA-Seq data
 ================================================================================
 
-Some ideas
 
