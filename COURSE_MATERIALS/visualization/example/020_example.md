@@ -26,29 +26,7 @@ File formats explored:
 - [BAM](http://www.broadinstitute.org/igv/bam)
 
 
-Data used in this practical
--------------------------------
-
-- [mirbase_mature.fa](../../../COURSE_EXAMPLE_DATA/f010_mirbase_mature.fa): mature micro RNAs downloaded form mirbase
-
-You can download them or copy them to your ``data`` directory for the practical
-
-<!-- clean directory
-    rm -r data
--->
-
-    mkdir data
-	cd data
-	cp ../../../../COURSE_EXAMPLE_DATA/f010_mirbase_mature.fa .
-
-
-\ 
-
-Find all data files for the course here: [COURSE_EXAMPLE_DATA](../../../COURSE_EXAMPLE_DATA)
-
-
-
-Exercise 1: Visualizing sequencing data
+Exercise 2: Visualizing RNA-Seq data
 ================================================================================
 
 In the following **folder** you wil find mapped sequencing data from a CEU trio (father, mother and child) from the 1000 Genomes Project:
