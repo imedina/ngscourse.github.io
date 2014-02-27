@@ -29,50 +29,62 @@ File formats explored:
 Exercise 2: Visualizing RNA-Seq data
 ================================================================================
 
-In the following **folder** you wil find mapped sequencing data from a CEU trio (father, mother and child) from the 1000 Genomes Project:
+In the following **folder** you wil find mapped RNA-Seq data from Illumina’s Human BodyMap 2.0 project. This dataset in particular contains reads from heart tissue.
 
-    cd ~/ngscourse.github.io/COURSE_EXAMPLE_DATA/visualization/example_1
+    cd ~/ngscourse.github.io/COURSE_EXAMPLE_DATA/visualization/example_2
     
     ll
 
-These datasets contain reads only for the [GABBR1](http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000204681;r=6:29523406-29601753) gene.
-
-Creating indexed files
---------------------------------------------------------------------------------
-
-Use ``samtools`` to index the bam files:
-
-    samtools index NA12878_child.bam
-    samtools index NA12891_dad.bam
-    samtools index NA12892_mom.bam
-
-
-Run IGV
---------------------------------------------------------------------------------
-
-    igv
-
-Downolad a referece genome
---------------------------------------------------------------------------------
-
-By default, IGV loads Human hg18 assembly. However, we must work with the **same assembly used to mapped our reads**, in this case Human hg19.  
-Genome assemblies for several species can be dowloaded using IGV:
-
-- Go to ``Genomes`` --> ``Load Genome From Server...``  
-Select **Human hg19**
-
     
-Loading and browsing files
+    
+Steps
 --------------------------------------------------------------------------------
 
+##### 1. Use ``samtools`` to index the bam file:  
+
+<input class="spoilerbutton" type="button" value="Show answer" onclick="this.value=this.value=='Show answer'?'Hide answer':'Show answer';">
+<div class="spoiler"><div>
+    samtools index heart.bodyMap.bam
+</div></div>
+
+##### 2. Open IGV and load the bam file heart.bodyMap.bam.  
+
+<input class="spoilerbutton" type="button" value="Show answer" onclick="this.value=this.value=='Show answer'?'Hide answer':'Show answer';">
+<div class="spoiler"><div>
+    igv
 - Go to ``File`` --> ``Load from file...``  
-Select NA12878_child.bam, NA12891_dad.bam and NA12892_mom.bam
+Select heart.bodyMap.bam
+</div></div>
 
-**Steps:**
-
-1. Enter the name of our gene (_**GABBR1**_) in the search box and hit ``Go``.
-2. Zoom in until you find some SNPs - they might be in exons or introns.
-3. Identify at least one example of a short insertion variant and deletion arround exon 4.
-4. Load and look at the SNP track: ``File`` --> ``Load from server`` --> ``Annotations`` --> ``Variants and Repeats`` --> ``dbSNP``
+##### 3. Navigate a little and get familiar with the software.  
+Reads are only on **chromosome 12 from 98Mbp to 100Mbp**.
 
 
+##### 4. Look for ***IKBIP*** gene and try to answer the following questions:
+
+ - How many different isoforms does the gene have? Which exon combinations form every isoform?  
+ **TIP:** Right-click on the Features panel --> Select ``Expanded``  
+<input class="spoilerbutton" type="button" value="Show answer" onclick="this.value=this.value=='Show answer'?'Hide answer':'Show answer';">
+<div class="spoiler"><div>
+The gene __IKBIP__ contains 4 exons that generate **3 different isoforms**:<br>- Isoform 1: exon 1 + exon 4<br>- Isoform 2: exon 1 + exon 3 + exon 4<br>- Isoform 3: exon 2 + exon 3 + exon 4
+</div></div>
+
+ - Create a **Sashimi plot** of the gene.  
+ **TIP:** center the gene IKBIP on the Track panel, right-click on the Panel and select ``Sashimi Plot``.  
+ What kind of information can you obtain from this plot?
+ <input class="spoilerbutton" type="button" value="Show answer" onclick="this.value=this.value=='Show answer'?'Hide answer':'Show answer';">
+<div class="spoiler"><div>
+The Sashimi Plot shows raw RNA-Seq densities along exons and junctions. Lines indicate junctions and the number corresponds to the number of reads that support this junction.
+</div></div>
+
+ - Load SNP data from **dbSNP 1.3.7** and go to position **chr12:99019058**.  
+ Is this person homozygous or heterozygous for this position?  
+ Would you trust this variant?  
+ Is this variant a known SNP?  
+<input class="spoilerbutton" type="button" value="Show answer" onclick="this.value=this.value=='Show answer'?'Hide answer':'Show answer';">
+<div class="spoiler"><div>
+`-` Load and look at the SNP track:  
+  ``File`` –> ``Load from server`` –> ``Annotations`` –> ``Variants and Repeats`` –> ``dbSNP 1.3.7``<br>- This individual is heterozygous for this position with alleles A/G.<br> - Yes. There are 17 high quality reads (47%) supporting this variant and the base quality is, in general, high.<br> - Yes, rs7310804.
+</div></div>
+
+-----
