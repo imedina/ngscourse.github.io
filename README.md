@@ -1,4 +1,3 @@
-
 NGS Data Analysis Course
 ================================================================================
 
@@ -18,6 +17,7 @@ NGS Data Analysis Course
 
 ### Visualization of NGS data
 
+- [Slides]() || [Practical exercise 1](COURSE_MATERIALS/visualization/example/example.html) || [Practical exercise 2]()
 
 
 ### Variant calling
