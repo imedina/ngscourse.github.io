@@ -17,7 +17,7 @@ NGS Data Analysis Course
 
 ### Visualization of NGS data
 
-- [Slides]() || [Practical exercise 1](COURSE_MATERIALS/visualization/example/example.html) || [Practical exercise 2]()
+- [Slides](COURSE_MATERIALS/visualization/slides/2014-Cambridge_visualisation.pdf) || [Practical exercise 1](COURSE_MATERIALS/visualization/example/010_example.html) || [Practical exercise 2](COURSE_MATERIALS/visualization/example/020_example.html)
 
 
 ### Variant calling
