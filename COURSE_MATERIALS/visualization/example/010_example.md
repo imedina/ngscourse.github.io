@@ -25,7 +25,7 @@ File formats explored:
 - [SAM](http://samtools.sourceforge.net/SAMv1.pdf)
 - [BAM](http://www.broadinstitute.org/igv/bam)
 
-
+<!--
 Data used in this practical
 -------------------------------
 
@@ -33,23 +33,26 @@ Data used in this practical
 
 You can download them or copy them to your ``data`` directory for the practical
 
-<!-- clean directory
-    rm -r data
--->
+ clean directory
 
+    rm -r data
     mkdir data
-	cd data
-	cp ../../../../COURSE_EXAMPLE_DATA/f010_mirbase_mature.fa .
+    cd data
+    cp ../../../../COURSE_EXAMPLE_DATA/f010_mirbase_mature.fa .
 
 
 \ 
 
 Find all data files for the course here: [COURSE_EXAMPLE_DATA](../../../COURSE_EXAMPLE_DATA)
 
-
+-->
 
 Exercise 1: Visualizing sequencing data
 ================================================================================
+
+Go to the directory where youhave downoaded your data: 
+
+    cd my_visual_data_dir  
 
 In the following **folder** you wil find mapped sequencing data from a CEU trio (father, mother and child) from the 1000 Genomes Project:
 
