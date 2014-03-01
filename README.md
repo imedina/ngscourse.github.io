@@ -1,6 +1,9 @@
 NGS Data Analysis Course
 ================================================================================
 
+Day 1
+
+
 ### Introduction to Linux systems
 
 
